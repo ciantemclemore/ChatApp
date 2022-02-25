@@ -12,7 +12,7 @@ namespace ChapAppServiceLibrary
     {
         //private readonly Dictionary<string, IChatManagerCallback> _users;
 
-        private HashSet<string> _clients;
+        private readonly HashSet<string> _clients;
 
         public ChatManagerService() 
         {
