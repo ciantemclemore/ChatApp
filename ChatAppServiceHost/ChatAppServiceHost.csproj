@@ -1,14 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net48</TargetFramework>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
+    <StartupObject>ChatAppServiceHost.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ChapAppServiceLibrary\ChapAppServiceLibrary.csproj" />
+    <ProjectReference Include="..\ChatAppServiceLibrary\ChatAppServiceLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>

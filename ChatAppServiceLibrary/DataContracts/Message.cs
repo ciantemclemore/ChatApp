@@ -5,29 +5,29 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChapAppServiceLibrary.DataContracts
+namespace ChatAppServiceLibrary.DataContracts
 {
     [DataContract]
     public class Message
     {
-        public Message(string userName, string content, string receiverName = "") 
+        public Message(Guid senderId, Guid receiverId, string content) 
         {
-            UserName = userName;
+            SenderId = senderId;
+            ReceiverId = receiverId;
             Content = content;
-            ReceiverName = receiverName;
         }
 
         [DataMember]
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [DataMember]
-        public string UserName { get; set; }
+        public Guid SenderId { get; set; }
 
         [DataMember]
-        public string ReceiverName { get; set; }
+        public Guid? ReceiverId { get; set; }
 
         [DataMember]
-        public DateTime Created { get; set; } = DateTime.Now;
+        public DateTime TimeStamp { get; set; } = DateTime.Now;
 
         [DataMember]
         public string Content { get; set; }
