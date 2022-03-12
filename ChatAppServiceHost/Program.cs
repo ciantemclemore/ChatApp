@@ -10,22 +10,12 @@ namespace ChatAppServiceHost
         {
             Console.WriteLine("Starting ChatApp Service...");
 
-            // The base address that the client will use to make request to the chat app service
-            Uri baseAddress = new Uri($"net.tcp://localhost:5001/ChatManagerService");
-
-            NetTcpBinding netTcpBinding = new NetTcpBinding(SecurityMode.None);
-            netTcpBinding.MaxConnections = 100;
-            netTcpBinding.Name = $"netTcpBinding1";
-
             // ServiceHost instance creation
+            // the app.config contains all of the configuration for the host to keep clean code
             ServiceHost chatServiceHost = new ServiceHost(typeof(ChatManagerService));
 
             try
             {
-                // add the endpoint
-                var serviceEndpoint = chatServiceHost.AddServiceEndpoint(typeof(IChatManagerService), netTcpBinding, baseAddress);
-                serviceEndpoint.Name = $"netTcp";
-
                 // open the service and block
                 chatServiceHost.Open();
 

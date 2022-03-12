@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.ServiceModel;
 
 namespace ChatAppServiceLibrary
@@ -28,9 +29,22 @@ namespace ChatAppServiceLibrary
             throw new NotImplementedException();
         }
 
-        public bool Login(string userName)
+        public bool Login(Client client)
         {
-            throw new NotImplementedException();
+            if (!_clients.Any(c => c.Name.Equals(client.Name, StringComparison.CurrentCultureIgnoreCase))) 
+            {
+                // this is a new client, add them to the clients list
+                _clients.Add(client);
+
+                // this is the current client connection, we store this to communicate with the client later
+                IChatManagerCallback callback = OperationContext.Current.GetCallbackChannel<IChatManagerCallback>();
+
+                _clientCallbacks.Add(client.Id, callback);
+
+                return true;
+            }
+
+            return false;
         }
 
         public void Logout(string userName)

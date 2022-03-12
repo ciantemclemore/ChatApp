@@ -8,7 +8,7 @@ namespace ChatAppServiceLibrary
     public interface IChatManagerService
     {
         [OperationContract]
-        bool Login(string userName);
+        bool Login(Client client);
 
         [OperationContract(IsOneWay = true)]
         void SendMessage(Message message);
