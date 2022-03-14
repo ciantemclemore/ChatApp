@@ -27,7 +27,7 @@ namespace ChatAppServiceHost
                 Console.ReadLine();
                 chatServiceHost.Close();
             }
-            catch (CommunicationException ce) 
+            catch (CommunicationException ce)
             {
                 Console.WriteLine($"An exception occurred: {ce.Message}");
                 chatServiceHost.Abort();

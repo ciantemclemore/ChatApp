@@ -87,6 +87,9 @@
                    FontWeight="Medium"
                    Foreground="Gray"
                    Margin="8,0,0,0"/>
+
+                <Button Grid.Row="0" HorizontalAlignment="Right">Add Title</Button>
+                
                 <ListView Grid.Row="1" ItemsSource="{Binding Titles}"
                           Background="Transparent"
                           BorderThickness="0"

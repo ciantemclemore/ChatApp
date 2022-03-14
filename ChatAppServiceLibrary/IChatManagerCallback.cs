@@ -12,6 +12,9 @@ namespace ChatAppServiceLibrary
 
 
         [OperationContract(IsOneWay = true)]
-        void GetOnlineClients(ObservableCollection<Client> clients);
+        void UpdateOnlineClients(ObservableCollection<Client> clients);
+
+        [OperationContract(IsOneWay = true)]
+        void UpdateAvailableTitles(ObservableCollection<Title> titles);
     }
 }

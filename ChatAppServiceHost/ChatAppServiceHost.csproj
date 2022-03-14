@@ -5,7 +5,7 @@
     <TargetFramework>net48</TargetFramework>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <StartupObject>ChatAppServiceHost.Program</StartupObject>
+    <StartupObject></StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

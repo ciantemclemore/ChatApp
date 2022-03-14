@@ -11,12 +11,22 @@ namespace WcfClient
     {
         public void GetOnlineClients(Client[] clients)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void ReceiveMessage(Message message)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+        }
+
+        public void UpdateAvailableTitles(Title[] titles)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void UpdateOnlineClients(Client[] clients)
+        {
+            //throw new NotImplementedException();
         }
     }
 }

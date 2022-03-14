@@ -9,7 +9,8 @@ namespace WcfClient
         static void Main(string[] args)
         {
             InstanceContext context = new InstanceContext(new ClientCallback());
-            ChatManagerServiceClient client = new ChatManagerServiceClient(context, "netTcp");
+            ChatManagerServiceClient client = new ChatManagerServiceClient(context);
+            //var proxy = client.ChannelFactory.CreateChannel();
 
             Client newClient = new Client()
             {
@@ -31,6 +32,7 @@ namespace WcfClient
                 }
 
                 // close the client
+                //proxy = null;
                 client.Close();
                 Console.ReadLine();
             }

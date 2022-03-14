@@ -18,6 +18,9 @@ namespace ChatAppServiceLibrary.DataContracts
         public string Name { get; set; }
 
         [DataMember]
+        public List<Client> Clients { get; set; }
+
+        [DataMember]
         public ObservableCollection<Message> Messages { get; set; }
     }
 }
