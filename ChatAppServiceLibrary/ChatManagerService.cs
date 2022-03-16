@@ -118,10 +118,10 @@ namespace ChatAppServiceLibrary
             {
                 // If we have a valid receiverId, we know the message is a private message
                 // else, the message should be broadcasted to all the clients
-                if (message.ReceiverId != null) 
-                {
+                //if (message.ReceiverId != null) 
+                //{
                 
-                }
+                //}
             }
         }
 

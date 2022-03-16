@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ChatAppWPFClient.ViewModels
 {
@@ -14,6 +15,18 @@ namespace ChatAppWPFClient.ViewModels
         public Client LocalClient { get; set; }
         public Action Close { get ; set; }
         public Action Open { get ; set; }
+
+        private Client _selectedUser;
+        public Client SelectedUser 
+        {
+            get => _selectedUser;
+            set 
+            {
+                _selectedUser = value;
+                OnPropertyChanged();
+                MessageBox.Show($"Selected User: {_selectedUser.Name}");
+            }
+        }
 
         private ObservableCollection<Client> _clients = new ObservableCollection<Client>();
         public ObservableCollection<Client> OnlineClients 

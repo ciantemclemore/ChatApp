@@ -52,6 +52,7 @@
                 <!--User listview-->
                 <ListView Grid.Row="1" DisplayMemberPath="Name" 
                           ItemsSource="{Binding OnlineClients, UpdateSourceTrigger=PropertyChanged}" 
+                          SelectedItem="{Binding SelectedUser}"
                           Background="Transparent" 
                           BorderThickness="0" />
 

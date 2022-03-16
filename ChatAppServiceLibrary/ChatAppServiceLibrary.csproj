@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatManagerService.cs" />
+    <Compile Include="DataContracts\ChatRoom.cs" />
     <Compile Include="DataContracts\Client.cs" />
     <Compile Include="DataContracts\Message.cs" />
     <Compile Include="DataContracts\Title.cs" />
