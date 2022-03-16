@@ -2,6 +2,7 @@
 using ChatAppWPFClient.Stores;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,17 @@ namespace ChatAppWPFClient.ViewModels
         public Client LocalClient { get; set; }
         public Action Close { get ; set; }
         public Action Open { get ; set; }
+
+        private ObservableCollection<Client> _clients = new ObservableCollection<Client>();
+        public ObservableCollection<Client> OnlineClients 
+        {
+            get => _clients;
+            set 
+            {
+                _clients = value;
+                OnPropertyChanged();
+            }
+        }
 
         private readonly NavigationStore _navigationStore;
 
@@ -61,7 +73,7 @@ namespace ChatAppWPFClient.ViewModels
 
         public void UpdateOnlineClients(Client[] clients)
         {
-            //throw new NotImplementedException();
+            OnlineClients = new ObservableCollection<Client>(clients);
         }
 
         public void CloseWindow()

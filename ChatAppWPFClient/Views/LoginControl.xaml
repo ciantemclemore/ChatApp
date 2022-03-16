@@ -6,21 +6,26 @@
              xmlns:views="clr-namespace:ChatAppWPFClient.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Margin="15">
+    <Grid Background="White">
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-
-        <TextBlock Grid.Row="0" HorizontalAlignment="Left" FontSize="17" Padding="10" FontWeight="SemiBold" >
-            Welcome to ChatApp. <LineBreak />
-            Please Login to view the features of this application.
+        
+        <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Chat App" FontSize="50" />
+        
+        <TextBlock Grid.Row="1" HorizontalAlignment="Center" FontSize="17" Padding="10" FontWeight="SemiBold" >
+            Welcome to ChatApp. Please Login to view the features of this application.
         </TextBlock>
-        <Label Grid.Row="1" Content="Username" FontWeight="Medium" Margin="5,0,0,0" />
-        <TextBox Grid.Row="2" Height="25" Margin="10,0,0,0" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
-        <Button Grid.Row="3" Width="100" Content="Login" 
-                HorizontalAlignment="Right" Margin="0,15,0,0" Command="{Binding NavigateChatAppControl}" />
+        
+        <Label Grid.Row="2" Content="Username" FontWeight="Medium" Margin="10,0,10,12" Grid.RowSpan="2" />
+        
+        <TextBox Grid.Row="3" Height="25" Margin="10,10,10,35" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Grid.RowSpan="2" />
+        
+        <Button Grid.Row="4" Width="90" Content="Login" 
+                HorizontalAlignment="Right" Margin="0,15,10,0" Command="{Binding LoginCommand}" />
     </Grid>
 </UserControl>

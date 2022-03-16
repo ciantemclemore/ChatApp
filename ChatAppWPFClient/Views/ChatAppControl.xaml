@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:ChatAppWPFClient.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Grid Background="White">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="3*" />
@@ -24,28 +24,41 @@
 
 
             <!--Titles Grid-->
-
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-
                 <!--Label and add title button-->
-
                 <Label Grid.Row="0" Content="Titles" FontWeight="SemiBold" />
                 <Button Grid.Row="0" Content="Add Title" HorizontalAlignment="Right" />
 
                 <!--Title listview-->
-
                 <ListView Grid.Row="1"  Background="Transparent" BorderThickness="0" />
 
             </Grid>
 
+            <!--Online Clients Grid-->
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <!--User label-->
+                <Label Grid.Row="0" Content="Users" FontWeight="SemiBold" />
+
+                <!--User listview-->
+                <ListView Grid.Row="1" DisplayMemberPath="Name" 
+                          ItemsSource="{Binding OnlineClients, UpdateSourceTrigger=PropertyChanged}" 
+                          Background="Transparent" 
+                          BorderThickness="0" />
+
+            </Grid>
         </Grid>
         <!--#endregion-->
-
+       
 
 
     </Grid>

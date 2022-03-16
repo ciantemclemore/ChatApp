@@ -16,52 +16,66 @@ namespace ChatAppWPFClient.ViewModels
     {
         public RelayCommand LoginCommand { get; set; }
 
-        public ICommand NavigateChatAppControl { get; }
+        public ICommand NavigateChatAppControl { get; set; }
 
-        public string Username { get; set; }
+        private string _userName;
+        public string Username 
+        {
+            get => _userName;
+            set 
+            {
+                _userName = value;
+                OnPropertyChanged();
+            }
+        }
 
         public Action Close { get; set; }
 
         public Action Open { get; set; }
 
+        private readonly NavigationStore _navigationStore;
+
         public LoginViewModel(NavigationStore navigationStore) 
         {
-            NavigateChatAppControl = new NavigateCommand<ChatAppViewModel>(navigationStore, () => new ChatAppViewModel(navigationStore));
-            //LoginCommand = new RelayCommand(async (o) => await ConnectToServer(o), o => !string.IsNullOrEmpty(Username));
+            _navigationStore = navigationStore;
+            LoginCommand = new RelayCommand(async (o) => await ConnectToServer(), o => !string.IsNullOrEmpty(Username));
+        }
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Clicked");
         }
 
-        private async Task ConnectToServer(object parameter)
+        private async Task ConnectToServer()
         {
-            // Create a context based on the main view model
-            //MainViewModel mainViewModel = new MainViewModel();
-            //InstanceContext context = new InstanceContext(mainViewModel);
-            
-            // create a tcp client that will have an open channel with the main view model
-            //ChatManagerServiceClient tcpClient = new ChatManagerServiceClient(context, "ChatManagerSvc");
+            ChatAppViewModel chatAppViewModel = new ChatAppViewModel(_navigationStore);
+            InstanceContext context = new InstanceContext(chatAppViewModel);
 
-            // Create a client to pass to the server
-            //Client client = new Client()
-            //{
-            //    Id = Guid.NewGuid(),
-            //    CreatedOn = DateTime.Now,
-            //    Name = Username,
-            //    TitleId = null
-            //};
+            //create a tcp client that will have an open channel with the chat app view model
+           ChatManagerServiceClient tcpClient = new ChatManagerServiceClient(context, "ChatManagerSvc");
 
-            //if (await tcpClient.LoginAsync(client))
-            //{
-            //    // now we can pass our view model as a context to the view
-            //    mainViewModel.LocalClient = client;
-            //    MainWindow mainWindow = new MainWindow(mainViewModel);
-            //    mainViewModel.OpenWindow();
-            //    //CloseWindow();
-            //}
-            //else 
-            //{
-            //    MessageBox.Show("Username already exists, try again!");
-            //}
+            //Create a client to pass to the server
+            Client client = new Client()
+            {
+                Id = Guid.NewGuid(),
+                CreatedOn = DateTime.Now,
+                Name = Username,
+                TitleId = null
+            };
 
-            //Username = string.Empty;
+            if (await tcpClient.LoginAsync(client))
+            {
+                // now we can pass our view model as a context to the view
+                chatAppViewModel.LocalClient = client;
+
+                NavigateChatAppControl = new NavigateCommand<ChatAppViewModel>(_navigationStore, () => chatAppViewModel);
+
+                NavigateChatAppControl.Execute(null);
+            }
+            else
+            {
+                MessageBox.Show(Application.Current.MainWindow,"Username already exists, try again!");
+                Username = string.Empty;
+            }
         }
 
         public void CloseWindow() 
