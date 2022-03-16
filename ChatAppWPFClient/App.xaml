@@ -1,8 +1,7 @@
 ﻿<Application x:Class="ChatAppWPFClient.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ChatAppWPFClient"
-             StartupUri="LoginWindow.xaml" ShutdownMode="OnLastWindowClose">
+             xmlns:local="clr-namespace:ChatAppWPFClient">
     <Application.Resources>
          
     </Application.Resources>

@@ -1,4 +1,6 @@
 ﻿using ChatAppServiceLibrary.DataContracts;
+using ChatAppWPFClient.Commands;
+using ChatAppWPFClient.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,12 +8,15 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
-namespace ChatAppWPFClient
+namespace ChatAppWPFClient.ViewModels
 {
-    public class LoginViewModel : IWindow, IChatManagerServiceCallback
+    public class LoginViewModel : ViewModelBase, IWindow
     {
         public RelayCommand LoginCommand { get; set; }
+
+        public ICommand NavigateChatAppControl { get; }
 
         public string Username { get; set; }
 
@@ -19,47 +24,44 @@ namespace ChatAppWPFClient
 
         public Action Open { get; set; }
 
-        public event Action OnRequestClose;
-
-        public LoginViewModel() 
+        public LoginViewModel(NavigationStore navigationStore) 
         {
-            LoginCommand = new RelayCommand(async (o) => await ConnectToServer(o), o => !string.IsNullOrEmpty(Username));
+            NavigateChatAppControl = new NavigateCommand<ChatAppViewModel>(navigationStore, () => new ChatAppViewModel(navigationStore));
+            //LoginCommand = new RelayCommand(async (o) => await ConnectToServer(o), o => !string.IsNullOrEmpty(Username));
         }
 
         private async Task ConnectToServer(object parameter)
         {
-            // First create a context based on our main view
-            //MainWindow mainWindow = new MainWindow();
-            InstanceContext context = new InstanceContext(this);
-
-            ChatManagerServiceClient tcpClient = new ChatManagerServiceClient(context, "ChatManagerSvc");
+            // Create a context based on the main view model
+            //MainViewModel mainViewModel = new MainViewModel();
+            //InstanceContext context = new InstanceContext(mainViewModel);
+            
+            // create a tcp client that will have an open channel with the main view model
+            //ChatManagerServiceClient tcpClient = new ChatManagerServiceClient(context, "ChatManagerSvc");
 
             // Create a client to pass to the server
-            Client client = new Client()
-            {
-                Id = Guid.NewGuid(),
-                CreatedOn = DateTime.Now,
-                Name = Username,
-                TitleId = null
-            };
+            //Client client = new Client()
+            //{
+            //    Id = Guid.NewGuid(),
+            //    CreatedOn = DateTime.Now,
+            //    Name = Username,
+            //    TitleId = null
+            //};
 
-            if (await tcpClient.LoginAsync(client))
-            {
-                // we can now show our main window and close this one
-                //if (mainWindow.DataContext is MainViewModel vm) 
-                //{
-                //    vm.LocalClient = client;
-                //    OnRequestClose?.Invoke();
-                //}
-                Console.WriteLine("Successful Login");
-                CloseWindow();
-            }
-            else 
-            {
-                MessageBox.Show("Username already exists, try again!");
-            }
+            //if (await tcpClient.LoginAsync(client))
+            //{
+            //    // now we can pass our view model as a context to the view
+            //    mainViewModel.LocalClient = client;
+            //    MainWindow mainWindow = new MainWindow(mainViewModel);
+            //    mainViewModel.OpenWindow();
+            //    //CloseWindow();
+            //}
+            //else 
+            //{
+            //    MessageBox.Show("Username already exists, try again!");
+            //}
 
-            Username = string.Empty;
+            //Username = string.Empty;
         }
 
         public void CloseWindow() 
@@ -70,21 +72,6 @@ namespace ChatAppWPFClient
         public void OpenWindow() 
         {
             Open?.Invoke();
-        }
-
-        public void ReceiveMessage(Message message)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void UpdateOnlineClients(Client[] clients)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void UpdateAvailableTitles(Title[] titles)
-        {
-           // throw new NotImplementedException();
         }
     }
 }

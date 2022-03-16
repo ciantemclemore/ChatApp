@@ -1,49 +1,27 @@
-﻿using ChatAppServiceLibrary.DataContracts;
+﻿using ChatAppWPFClient.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChatAppWPFClient
+namespace ChatAppWPFClient.ViewModels
 {
-    public class MainViewModel : IChatManagerServiceCallback
+    public class MainViewModel : ViewModelBase
     {
-        public Client LocalClient { get; set; }
+        private readonly NavigationStore _navigationStore;
 
-        private void InputDialog_OnLoginButtonClicked(LoginWindow inputDialog)
+        public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel;
+
+        public MainViewModel(NavigationStore navigationStore)
         {
-            
-
-            //// create a client
-            //Client newClient = new Client()
-            //{
-            //    Id = Guid.NewGuid(),
-            //    Name = inputDialog.Answer,
-            //    CreatedOn = DateTime.Now,
-            //    TitleId = null
-            //};
-
-            //while (!client.Login(newClient)) 
-            //{
-            //    inputDialog.lblQuestion.Content = "Try again, login name already exists:";
-            //}
-
+            _navigationStore = navigationStore;
+            _navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged;
         }
 
-        public void ReceiveMessage(Message message)
+        private void OnCurrentViewModelChanged()
         {
-            //throw new NotImplementedException();
-        }
-
-        public void UpdateAvailableTitles(Title[] titles)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void UpdateOnlineClients(Client[] clients)
-        {
-            //throw new NotImplementedException();
+            OnPropertyChanged(nameof(CurrentViewModel));
         }
     }
 }

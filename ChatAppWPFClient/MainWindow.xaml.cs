@@ -28,6 +28,11 @@ namespace ChatAppWPFClient
             InitializeComponent();
         }
 
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+           
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // Here we handle disconnecting the current client from the session and removing them from the service
