@@ -1,5 +1,6 @@
 ﻿using ChatAppServiceLibrary.DataContracts;
 using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 
 namespace ChatAppServiceLibrary
@@ -14,16 +15,16 @@ namespace ChatAppServiceLibrary
         [OperationContract(IsOneWay = true)]
         void SendMessage(Message message);
 
+        [OperationContract(IsOneWay = false)]
+        bool CanCreateChatRoom(Guid chatRoomId, string chatRoomName);
+        
         [OperationContract(IsOneWay = true)]
-        void JoinTitle(Client client, Guid titleId);
+        void CreatePublicChatRoom(ChatRoomRequest chatRoomRequest, List<Guid> clients);
 
-        [OperationContract]
-        bool CreateChatRoom(string chatRoomName);
+        [OperationContract(IsOneWay = true)]
+        void JoinChatRoom(Guid chatRoomId, Client client);
 
         [OperationContract(IsOneWay = true, IsTerminating = true)]
         void Logout(string userName);
-
-        [OperationContract]
-        bool IsLoggedIn(string userName);
     }
 }

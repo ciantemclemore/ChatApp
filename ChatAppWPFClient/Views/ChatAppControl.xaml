@@ -46,6 +46,12 @@
 
                 <!--User label-->
                 <Label Grid.Row="0" Content="Private Rooms" FontWeight="SemiBold" />
+                <ListView Grid.Row="1" Background="Transparent" 
+                          BorderThickness="0"
+                          ItemsSource="{Binding ChatRooms}"
+                          SelectedItem="{Binding SelectedChatRoom}">
+                           
+                </ListView>
             </Grid>
         </Grid>
         <!--#endregion-->

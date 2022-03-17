@@ -15,6 +15,9 @@ namespace ChatAppServiceLibrary
         void UpdateOnlineClients(ObservableCollection<Client> clients);
 
         [OperationContract(IsOneWay = true)]
-        void UpdateAvailableTitles(ObservableCollection<Title> titles);
+        void UpdatePublicChatRooms(ObservableCollection<ChatRoom> chatRooms);
+
+        [OperationContract(IsOneWay = true)]
+        void CreatePrivateRoom(ChatRoom chatRoom);
     }
 }

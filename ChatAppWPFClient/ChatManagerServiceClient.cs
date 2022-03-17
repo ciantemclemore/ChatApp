@@ -102,13 +102,17 @@ namespace ChatAppServiceLibrary.DataContracts
         
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
+        private System.Guid ChatRoomIdField;
+        
+        private string ChatRoomNameField;
+        
         private string ContentField;
         
         private System.Guid IdField;
         
-        private System.Nullable<System.Guid> ReceiverIdField;
+        private ChatAppServiceLibrary.DataContracts.Client ReceiverField;
         
-        private System.Guid SenderIdField;
+        private ChatAppServiceLibrary.DataContracts.Client SenderField;
         
         private System.DateTime TimeStampField;
         
@@ -121,6 +125,32 @@ namespace ChatAppServiceLibrary.DataContracts
             set
             {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid ChatRoomId
+        {
+            get
+            {
+                return this.ChatRoomIdField;
+            }
+            set
+            {
+                this.ChatRoomIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ChatRoomName
+        {
+            get
+            {
+                return this.ChatRoomNameField;
+            }
+            set
+            {
+                this.ChatRoomNameField = value;
             }
         }
         
@@ -151,28 +181,28 @@ namespace ChatAppServiceLibrary.DataContracts
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<System.Guid> ReceiverId
+        public ChatAppServiceLibrary.DataContracts.Client Receiver
         {
             get
             {
-                return this.ReceiverIdField;
+                return this.ReceiverField;
             }
             set
             {
-                this.ReceiverIdField = value;
+                this.ReceiverField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Guid SenderId
+        public ChatAppServiceLibrary.DataContracts.Client Sender
         {
             get
             {
-                return this.SenderIdField;
+                return this.SenderField;
             }
             set
             {
-                this.SenderIdField = value;
+                this.SenderField = value;
             }
         }
         
@@ -192,19 +222,17 @@ namespace ChatAppServiceLibrary.DataContracts
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Title", Namespace="http://schemas.datacontract.org/2004/07/ChatAppServiceLibrary.DataContracts")]
-    public partial class Title : object, System.Runtime.Serialization.IExtensibleDataObject
+    [System.Runtime.Serialization.DataContractAttribute(Name="ChatRoomRequest", Namespace="http://schemas.datacontract.org/2004/07/ChatAppServiceLibrary.DataContracts")]
+    public partial class ChatRoomRequest : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
-        private ChatAppServiceLibrary.DataContracts.Client[] ClientsField;
-        
-        private System.Guid IdField;
-        
-        private ChatAppServiceLibrary.DataContracts.Message[] MessagesField;
-        
         private string NameField;
+        
+        private string ReceiverTitleField;
+        
+        private string SenderTitleField;
         
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData
         {
@@ -219,7 +247,81 @@ namespace ChatAppServiceLibrary.DataContracts
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ChatAppServiceLibrary.DataContracts.Client[] Clients
+        public string Name
+        {
+            get
+            {
+                return this.NameField;
+            }
+            set
+            {
+                this.NameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ReceiverTitle
+        {
+            get
+            {
+                return this.ReceiverTitleField;
+            }
+            set
+            {
+                this.ReceiverTitleField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SenderTitle
+        {
+            get
+            {
+                return this.SenderTitleField;
+            }
+            set
+            {
+                this.SenderTitleField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ChatRoom", Namespace="http://schemas.datacontract.org/2004/07/ChatAppServiceLibrary.DataContracts")]
+    public partial class ChatRoom : object, System.Runtime.Serialization.IExtensibleDataObject
+    {
+        
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        private System.Collections.Generic.List<System.Guid> ClientsField;
+        
+        private System.Guid IdField;
+        
+        private bool IsPublicField;
+        
+        private System.Collections.Generic.List<ChatAppServiceLibrary.DataContracts.Message> MessagesField;
+        
+        private string NameField;
+        
+        private string ReceiverTitleField;
+        
+        private string SenderTitleField;
+        
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
+        {
+            get
+            {
+                return this.extensionDataField;
+            }
+            set
+            {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Collections.Generic.List<System.Guid> Clients
         {
             get
             {
@@ -245,7 +347,20 @@ namespace ChatAppServiceLibrary.DataContracts
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ChatAppServiceLibrary.DataContracts.Message[] Messages
+        public bool IsPublic
+        {
+            get
+            {
+                return this.IsPublicField;
+            }
+            set
+            {
+                this.IsPublicField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Collections.Generic.List<ChatAppServiceLibrary.DataContracts.Message> Messages
         {
             get
             {
@@ -269,6 +384,32 @@ namespace ChatAppServiceLibrary.DataContracts
                 this.NameField = value;
             }
         }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ReceiverTitle
+        {
+            get
+            {
+                return this.ReceiverTitleField;
+            }
+            set
+            {
+                this.ReceiverTitleField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SenderTitle
+        {
+            get
+            {
+                return this.SenderTitleField;
+            }
+            set
+            {
+                this.SenderTitleField = value;
+            }
+        }
     }
 }
 
@@ -290,29 +431,29 @@ public interface IChatManagerService
     [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManagerService/SendMessage")]
     System.Threading.Tasks.Task SendMessageAsync(ChatAppServiceLibrary.DataContracts.Message message);
     
-    [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManagerService/JoinTitle")]
-    void JoinTitle(ChatAppServiceLibrary.DataContracts.Client client, System.Guid titleId);
+    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatManagerService/CanCreateChatRoom", ReplyAction="http://tempuri.org/IChatManagerService/CanCreateChatRoomResponse")]
+    bool CanCreateChatRoom(System.Guid chatRoomId, string chatRoomName);
     
-    [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManagerService/JoinTitle")]
-    System.Threading.Tasks.Task JoinTitleAsync(ChatAppServiceLibrary.DataContracts.Client client, System.Guid titleId);
+    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatManagerService/CanCreateChatRoom", ReplyAction="http://tempuri.org/IChatManagerService/CanCreateChatRoomResponse")]
+    System.Threading.Tasks.Task<bool> CanCreateChatRoomAsync(System.Guid chatRoomId, string chatRoomName);
     
-    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatManagerService/CreateTitle", ReplyAction="http://tempuri.org/IChatManagerService/CreateTitleResponse")]
-    bool CreateTitle(string titleName);
+    [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManagerService/CreatePublicChatRoom")]
+    void CreatePublicChatRoom(ChatAppServiceLibrary.DataContracts.ChatRoomRequest chatRoomRequest, System.Collections.Generic.List<System.Guid> clients);
     
-    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatManagerService/CreateTitle", ReplyAction="http://tempuri.org/IChatManagerService/CreateTitleResponse")]
-    System.Threading.Tasks.Task<bool> CreateTitleAsync(string titleName);
+    [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManagerService/CreatePublicChatRoom")]
+    System.Threading.Tasks.Task CreatePublicChatRoomAsync(ChatAppServiceLibrary.DataContracts.ChatRoomRequest chatRoomRequest, System.Collections.Generic.List<System.Guid> clients);
+    
+    [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManagerService/JoinChatRoom")]
+    void JoinChatRoom(System.Guid chatRoomId, ChatAppServiceLibrary.DataContracts.Client client);
+    
+    [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManagerService/JoinChatRoom")]
+    System.Threading.Tasks.Task JoinChatRoomAsync(System.Guid chatRoomId, ChatAppServiceLibrary.DataContracts.Client client);
     
     [System.ServiceModel.OperationContractAttribute(IsOneWay=true, IsTerminating=true, Action="http://tempuri.org/IChatManagerService/Logout")]
     void Logout(string userName);
     
     [System.ServiceModel.OperationContractAttribute(IsOneWay=true, IsTerminating=true, Action="http://tempuri.org/IChatManagerService/Logout")]
     System.Threading.Tasks.Task LogoutAsync(string userName);
-    
-    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatManagerService/IsLoggedIn", ReplyAction="http://tempuri.org/IChatManagerService/IsLoggedInResponse")]
-    bool IsLoggedIn(string userName);
-    
-    [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatManagerService/IsLoggedIn", ReplyAction="http://tempuri.org/IChatManagerService/IsLoggedInResponse")]
-    System.Threading.Tasks.Task<bool> IsLoggedInAsync(string userName);
 }
 
 [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -323,10 +464,13 @@ public interface IChatManagerServiceCallback
     void ReceiveMessage(ChatAppServiceLibrary.DataContracts.Message message);
     
     [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManagerService/UpdateOnlineClients")]
-    void UpdateOnlineClients(ChatAppServiceLibrary.DataContracts.Client[] clients);
+    void UpdateOnlineClients(System.Collections.Generic.List<ChatAppServiceLibrary.DataContracts.Client> clients);
     
-    [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManagerService/UpdateAvailableTitles")]
-    void UpdateAvailableTitles(ChatAppServiceLibrary.DataContracts.Title[] titles);
+    [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManagerService/UpdatePublicChatRooms")]
+    void UpdatePublicChatRooms(System.Collections.Generic.List<ChatAppServiceLibrary.DataContracts.ChatRoom> chatRooms);
+    
+    [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManagerService/CreatePrivateRoom")]
+    void CreatePrivateRoom(ChatAppServiceLibrary.DataContracts.ChatRoom chatRoom);
 }
 
 [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -384,24 +528,34 @@ public partial class ChatManagerServiceClient : System.ServiceModel.DuplexClient
         return base.Channel.SendMessageAsync(message);
     }
     
-    public void JoinTitle(ChatAppServiceLibrary.DataContracts.Client client, System.Guid titleId)
+    public bool CanCreateChatRoom(System.Guid chatRoomId, string chatRoomName)
     {
-        base.Channel.JoinTitle(client, titleId);
+        return base.Channel.CanCreateChatRoom(chatRoomId, chatRoomName);
     }
     
-    public System.Threading.Tasks.Task JoinTitleAsync(ChatAppServiceLibrary.DataContracts.Client client, System.Guid titleId)
+    public System.Threading.Tasks.Task<bool> CanCreateChatRoomAsync(System.Guid chatRoomId, string chatRoomName)
     {
-        return base.Channel.JoinTitleAsync(client, titleId);
+        return base.Channel.CanCreateChatRoomAsync(chatRoomId, chatRoomName);
     }
     
-    public bool CreateTitle(string titleName)
+    public void CreatePublicChatRoom(ChatAppServiceLibrary.DataContracts.ChatRoomRequest chatRoomRequest, System.Collections.Generic.List<System.Guid> clients)
     {
-        return base.Channel.CreateTitle(titleName);
+        base.Channel.CreatePublicChatRoom(chatRoomRequest, clients);
     }
     
-    public System.Threading.Tasks.Task<bool> CreateTitleAsync(string titleName)
+    public System.Threading.Tasks.Task CreatePublicChatRoomAsync(ChatAppServiceLibrary.DataContracts.ChatRoomRequest chatRoomRequest, System.Collections.Generic.List<System.Guid> clients)
     {
-        return base.Channel.CreateTitleAsync(titleName);
+        return base.Channel.CreatePublicChatRoomAsync(chatRoomRequest, clients);
+    }
+    
+    public void JoinChatRoom(System.Guid chatRoomId, ChatAppServiceLibrary.DataContracts.Client client)
+    {
+        base.Channel.JoinChatRoom(chatRoomId, client);
+    }
+    
+    public System.Threading.Tasks.Task JoinChatRoomAsync(System.Guid chatRoomId, ChatAppServiceLibrary.DataContracts.Client client)
+    {
+        return base.Channel.JoinChatRoomAsync(chatRoomId, client);
     }
     
     public void Logout(string userName)
@@ -412,15 +566,5 @@ public partial class ChatManagerServiceClient : System.ServiceModel.DuplexClient
     public System.Threading.Tasks.Task LogoutAsync(string userName)
     {
         return base.Channel.LogoutAsync(userName);
-    }
-    
-    public bool IsLoggedIn(string userName)
-    {
-        return base.Channel.IsLoggedIn(userName);
-    }
-    
-    public System.Threading.Tasks.Task<bool> IsLoggedInAsync(string userName)
-    {
-        return base.Channel.IsLoggedInAsync(userName);
     }
 }

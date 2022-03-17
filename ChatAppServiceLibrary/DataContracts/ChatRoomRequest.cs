@@ -8,15 +8,8 @@ using System.Threading.Tasks;
 namespace ChatAppServiceLibrary.DataContracts
 {
     [DataContract]
-    public class ChatRoom
+    public class ChatRoomRequest
     {
-        public ChatRoom() 
-        {
-        }
-
-        [DataMember]
-        public Guid Id { get; set; }
-
         [DataMember]
         public string Name { get; set; }
 
@@ -25,14 +18,5 @@ namespace ChatAppServiceLibrary.DataContracts
 
         [DataMember]
         public string ReceiverTitle { get; set; }
-
-        [DataMember]
-        public List<Guid> Clients { get; set; } = new List<Guid>();
-
-        [DataMember]
-        public bool IsPublic { get; set; }
-
-        [DataMember]
-        public List<Message> Messages { get; set; } = new List<Message>();
     }
 }

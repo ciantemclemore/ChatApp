@@ -14,9 +14,10 @@ namespace ChatAppServiceLibrary.DataContracts
         {
         }
 
-        public Message(Guid senderId, Guid chatRoomId, string content) 
+        public Message(Client sender, Client receiver, Guid chatRoomId, string content) 
         {
-            SenderId = senderId;
+            Sender = sender;
+            Receiver = receiver;  
             ChatRoomId = chatRoomId;
             Content = content;
         }
@@ -25,7 +26,13 @@ namespace ChatAppServiceLibrary.DataContracts
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [DataMember]
-        public Guid SenderId { get; set; }
+        public Client Sender { get; set; }
+
+        [DataMember]
+        public Client Receiver { get; set; }
+
+        [DataMember]
+        public string ChatRoomName { get; set; }
 
         [DataMember]
         public Guid ChatRoomId { get; set; }

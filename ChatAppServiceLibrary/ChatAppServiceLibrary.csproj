@@ -15,12 +15,12 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
     <XsdCodeGenEnabled>True</XsdCodeGenEnabled>
-    <XsdCodeGenSerializerMode>XmlSerializer</XsdCodeGenSerializerMode>
+    <XsdCodeGenSerializerMode>DataContractSerializer</XsdCodeGenSerializerMode>
     <XsdCodeGenReuseTypesFlag>True</XsdCodeGenReuseTypesFlag>
     <XsdCodeGenReuseTypesMode>All</XsdCodeGenReuseTypesMode>
     <XsdCodeGenReferences />
     <XsdCodeGenNamespaceMappings>%2a, ChatAppServiceLibrary.ContractTypes</XsdCodeGenNamespaceMappings>
-    <XsdCodeGenCollectionTypes>System.Array%3bSystem.Collections.Generic.Dictionary`2</XsdCodeGenCollectionTypes>
+    <XsdCodeGenCollectionTypes>System.Collections.Generic.List`1%3bSystem.Collections.Generic.Dictionary`2</XsdCodeGenCollectionTypes>
     <XsdCodeGenExcludedTypes />
     <XsdCodeGenImportXmlTypes>True</XsdCodeGenImportXmlTypes>
     <XsdCodeGenGenerateSerializableTypes>True</XsdCodeGenGenerateSerializableTypes>
@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="ChatManagerService.cs" />
     <Compile Include="DataContracts\ChatRoom.cs" />
+    <Compile Include="DataContracts\ChatRoomRequest.cs" />
     <Compile Include="DataContracts\Client.cs" />
     <Compile Include="DataContracts\Message.cs" />
     <Compile Include="DataContracts\Title.cs" />
