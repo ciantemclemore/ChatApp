@@ -33,7 +33,8 @@ namespace ChatAppWPFClient.ViewModels
         }
 
         private RelayCommand CreateRoomCommand { get; set; }
-        public RelayCommand SendPrivateMessageCommand { get; set; }
+        public RelayCommand CreatePrivateRoomCommand { get; set; }
+        public RelayCommand SendMessageCommand { get; set; }
 
         private Client _selectedUser = null;
         public Client SelectedUser 
@@ -42,6 +43,17 @@ namespace ChatAppWPFClient.ViewModels
             set 
             {
                 _selectedUser = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _messageText;
+        public string MessageText 
+        {
+            get => _messageText;
+            set 
+            {
+                _messageText = value;
                 OnPropertyChanged();
             }
         }
@@ -65,26 +77,41 @@ namespace ChatAppWPFClient.ViewModels
         {
             _navigationStore = navigationStore;
             _navigationStore.CurrentViewModelChanged += _navigationStore_CurrentViewModelChanged;
-            SendPrivateMessageCommand = new RelayCommand(async (o) => await SendMessage(), (o) => (SelectedUser != null) && !ChatRooms.Any(cr => cr.Name.Equals($"{LocalClient.Name} {SelectedUser.Name}")));
+            CreatePrivateRoomCommand = new RelayCommand(CreateLocalPrivateRoom, (o) => (SelectedUser != null) && !ChatRooms.Any(cr => cr.Name.Equals($"{SelectedUser.Name}")));
+            SendMessageCommand = new RelayCommand(async (o) => await SendMessage(o), (o) => !string.IsNullOrEmpty(MessageText) && SelectedChatRoom != null);
         }
 
-        private async Task SendMessage() 
+        private void CreateLocalPrivateRoom(object parameter) 
         {
-            if (SelectedUser != null) 
+            // Create a temp room until the user sends a message
+            ChatRoom chatRoom = new ChatRoom()
             {
-                // Create a temp room until the user sends a message
-                ChatRoom chatRoom = new ChatRoom()
-                {
-                    Name = $"{LocalClient.Name} {SelectedUser.Name}"
-                };
-
-                ChatRooms.Add(chatRoom);
-            }
+                Name = $"{LocalClient.Name} {SelectedUser.Name}",
+                Clients = new List<Guid>() { LocalClient.Id },
+                IsPublic = false,
+                SenderTitle = LocalClient.Name,
+                ReceiverTitle = SelectedUser.Name
+            };
+            ChatRooms.Add(chatRoom);
         }
 
-        private async Task CreateRoom(object parameter) 
+        private async Task SendMessage(object parameter) 
         {
-        
+            Message newMessage;
+
+            // Determine if this is a private message or public message
+            if (SelectedUser != null && !SelectedChatRoom.IsPublic)
+            {
+                // this is a private message
+                newMessage = new Message() 
+                {
+                    a
+                }
+            }
+            else 
+            {
+                
+            }
         }
 
         private void _navigationStore_CurrentViewModelChanged()
