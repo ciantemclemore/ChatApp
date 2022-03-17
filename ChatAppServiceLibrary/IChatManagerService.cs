@@ -18,7 +18,7 @@ namespace ChatAppServiceLibrary
         void JoinTitle(Client client, Guid titleId);
 
         [OperationContract]
-        bool CreateTitle(string titleName);
+        bool CreateChatRoom(string chatRoomName);
 
         [OperationContract(IsOneWay = true, IsTerminating = true)]
         void Logout(string userName);

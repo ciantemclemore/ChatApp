@@ -1,4 +1,5 @@
 ﻿using ChatAppServiceLibrary.DataContracts;
+using ChatAppWPFClient.Commands;
 using ChatAppWPFClient.Stores;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,10 @@ namespace ChatAppWPFClient.ViewModels
         public Action Close { get ; set; }
         public Action Open { get ; set; }
 
-        private Client _selectedUser;
+        private RelayCommand CreateRoomCommand { get; set; }
+        public RelayCommand SendPrivateMessageCommand { get; set; }
+
+        private Client _selectedUser = null;
         public Client SelectedUser 
         {
             get => _selectedUser;
@@ -24,7 +28,6 @@ namespace ChatAppWPFClient.ViewModels
             {
                 _selectedUser = value;
                 OnPropertyChanged();
-                MessageBox.Show($"Selected User: {_selectedUser.Name}");
             }
         }
 
@@ -47,6 +50,17 @@ namespace ChatAppWPFClient.ViewModels
         {
             _navigationStore = navigationStore;
             _navigationStore.CurrentViewModelChanged += _navigationStore_CurrentViewModelChanged;
+            SendPrivateMessageCommand = new RelayCommand(async (o) => await SendMessage(), (o) => !(SelectedUser == null));
+        }
+
+        private async Task SendMessage() 
+        {
+            
+        }
+
+        private async Task CreateRoom(object parameter) 
+        {
+        
         }
 
         private void _navigationStore_CurrentViewModelChanged()
@@ -86,7 +100,7 @@ namespace ChatAppWPFClient.ViewModels
 
         public void UpdateOnlineClients(Client[] clients)
         {
-            OnlineClients = new ObservableCollection<Client>(clients);
+            OnlineClients = new ObservableCollection<Client>(clients.Where(c => c.Id != LocalClient.Id));
         }
 
         public void CloseWindow()

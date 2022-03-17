@@ -62,18 +62,18 @@ namespace ChatAppWPFClient.ViewModels
                 TitleId = null
             };
 
+            // assign the current client to the view model
+            chatAppViewModel.LocalClient = client;
+
             if (await tcpClient.LoginAsync(client))
             {
-                // now we can pass our view model as a context to the view
-                chatAppViewModel.LocalClient = client;
-
                 NavigateChatAppControl = new NavigateCommand<ChatAppViewModel>(_navigationStore, () => chatAppViewModel);
-
                 NavigateChatAppControl.Execute(null);
             }
             else
             {
                 MessageBox.Show(Application.Current.MainWindow,"Username already exists, try again!");
+                chatAppViewModel.LocalClient = null;
                 Username = string.Empty;
             }
         }

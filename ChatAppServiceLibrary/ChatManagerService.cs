@@ -14,6 +14,7 @@ namespace ChatAppServiceLibrary
         private readonly Dictionary<Guid, IChatManagerCallback> _clientCallbacks = new Dictionary<Guid, IChatManagerCallback>();
         private readonly ObservableCollection<Client> _clients = new ObservableCollection<Client>();
         private readonly ObservableCollection<Title> _titles = new ObservableCollection<Title>();
+        private readonly Dictionary<Guid, ChatRoom> _chatRooms = new Dictionary<Guid, ChatRoom>();
         private object clientLock = new object();
         private object titleLock = new object();
 
@@ -130,5 +131,9 @@ namespace ChatAppServiceLibrary
             throw new NotImplementedException();
         }
 
+        public bool CreateChatRoom(string chatRoomName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

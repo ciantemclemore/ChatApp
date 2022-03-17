@@ -9,21 +9,20 @@
     <Grid Background="White">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
 
-        <!--#region Left Column: Titles, Users, Current User info-->
-
+        <!--#region Left Column: Chat Rooms-->
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="50" />
             </Grid.RowDefinitions>
 
 
-            <!--Titles Grid-->
+            <!--Public Rooms Grid-->
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -31,15 +30,14 @@
                 </Grid.RowDefinitions>
 
                 <!--Label and add title button-->
-                <Label Grid.Row="0" Content="Titles" FontWeight="SemiBold" />
-                <Button Grid.Row="0" Content="Add Title" HorizontalAlignment="Right" />
+                <Label Grid.Row="0" Content="Public Rooms" FontWeight="SemiBold" />
+                <Button Grid.Row="0" Content="Create Room" HorizontalAlignment="Right" />
 
                 <!--Title listview-->
                 <ListView Grid.Row="1"  Background="Transparent" BorderThickness="0" />
-
             </Grid>
 
-            <!--Online Clients Grid-->
+            <!--Private Rooms Grid-->
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -47,20 +45,41 @@
                 </Grid.RowDefinitions>
 
                 <!--User label-->
-                <Label Grid.Row="0" Content="Users" FontWeight="SemiBold" />
-
-                <!--User listview-->
-                <ListView Grid.Row="1" DisplayMemberPath="Name" 
-                          ItemsSource="{Binding OnlineClients, UpdateSourceTrigger=PropertyChanged}" 
-                          SelectedItem="{Binding SelectedUser}"
-                          Background="Transparent" 
-                          BorderThickness="0" />
-
+                <Label Grid.Row="0" Content="Private Rooms" FontWeight="SemiBold" />
             </Grid>
         </Grid>
         <!--#endregion-->
-       
+        
+        <!--#region Message Grid-->
+        <Grid Grid.Column="1">
+            
+        </Grid>
+        <!--#endregion-->
+        
+        <!--#region Online Users Grid-->
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
 
+            <Label Grid.Row="0" Content="Online Users" 
+                   FontWeight="SemiBold"
+                   HorizontalAlignment="Center"/>
 
+            <!--User listview-->
+            <ListView Grid.Row="1" DisplayMemberPath="Name" 
+                          ItemsSource="{Binding OnlineClients, UpdateSourceTrigger=PropertyChanged}" 
+                          SelectedItem="{Binding SelectedUser}"
+                          Background="Transparent" 
+                          BorderThickness="0" >
+            </ListView>
+
+            <Button Grid.Row="2" Content="Send Private Message" 
+                    Margin="10" Command="{Binding SendPrivateMessageCommand}"
+                    />
+        </Grid>
+        <!--#endregion-->
     </Grid>
 </UserControl>
