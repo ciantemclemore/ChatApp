@@ -64,6 +64,7 @@ namespace ChatAppWPFClient.ViewModels
 
             // assign the current client to the view model
             chatAppViewModel.LocalClient = client;
+            chatAppViewModel.TcpClient = tcpClient;
 
             if (await tcpClient.LoginAsync(client))
             {

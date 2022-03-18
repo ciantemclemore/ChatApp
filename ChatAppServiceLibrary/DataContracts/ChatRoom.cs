@@ -27,12 +27,12 @@ namespace ChatAppServiceLibrary.DataContracts
         public string ReceiverTitle { get; set; }
 
         [DataMember]
-        public List<Guid> Clients { get; set; } = new List<Guid>();
+        public List<Client> Clients { get; set; }
 
         [DataMember]
         public bool IsPublic { get; set; }
 
         [DataMember]
-        public List<Message> Messages { get; set; } = new List<Message>();
+        public List<Message> Messages { get; set; }
     }
 }

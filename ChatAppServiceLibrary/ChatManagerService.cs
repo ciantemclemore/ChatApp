@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading.Tasks;
 
 namespace ChatAppServiceLibrary
 {
@@ -81,39 +82,32 @@ namespace ChatAppServiceLibrary
         }
         public void SendMessage(Message message)
         {
+            // First, add the message to the chatroom it belongs to
+            lock (chatRoomLock)
+            {
+                _chatRooms[message.ChatRoomId].Messages.Add(message);
+            }
+
             if (message.Receiver != null)
             {
-                // Create an actual room on the server for both the sender and receiver so they can reference it locally
-                bool isReceiverOnline = IsLoggedIn(message.Receiver.Id);
-                var senderCallback = _clientCallbacks[message.Sender.Id];
-                var receiverCallback = _clientCallbacks[message.Receiver.Id];
-
-                // If the user still exists we can send the message
-                if (isReceiverOnline)
+                // send the message to the private room
+                lock (callbackLock)
                 {
-                    if (CanCreatePrivateChatRoom(message.Sender, message.Receiver))
+                    bool isReceiverOnline = IsLoggedIn(message.Receiver.Id);
+                    IChatManagerCallback senderCallback = _clientCallbacks[message.Sender.Id];
+                    IChatManagerCallback receiverCallback = _clientCallbacks[message.Receiver.Id];
+
+                    if (isReceiverOnline)
                     {
-                        ChatRoomRequest chatRoomRequest = new ChatRoomRequest()
-                        {
-                            Name = $"{message.Sender.Id} {message.Receiver.Id}",
-                            SenderTitle = message.Sender.Name,
-                            ReceiverTitle = message.Receiver.Name,
-                        };
-
-                        // Create the chat room for the two clients
-                        CreatePrivateChatRoom(chatRoomRequest, message.Sender, message.Receiver);
-
                         // send the message to both clients
                         senderCallback.ReceiveMessage(message);
                         receiverCallback.ReceiveMessage(message);
-
                     }
-                    // what do you do if you can't create the room?
-                }
-                else 
-                {
-                    // send the message only back to the sender
-                    senderCallback.ReceiveMessage(message);
+                    else
+                    {
+                        // send the message only back to the sender
+                        senderCallback.ReceiveMessage(message);
+                    }
                 }
             }
             else 
@@ -139,26 +133,50 @@ namespace ChatAppServiceLibrary
             lock (chatRoomLock)
             {
                 ChatRoom chatRoomToJoin = _chatRooms[chatRoomId];
-                List<ChatRoom> chatRoomsToLeave = _chatRooms.Values.Where(cr => cr.IsPublic && !cr.Name.Equals(chatRoomId) && cr.Clients.Any(c => c == client.Id)).ToList();
 
                 // Add the client to the new room
                 if (chatRoomToJoin != null)
                 {
-                    chatRoomToJoin.Clients.Add(client.Id);
+                    chatRoomToJoin.Clients.Add(client);
                 }
+
+                List<ChatRoom> chatRoomsToLeave = _chatRooms.Values.Where(cr => cr.IsPublic && !cr.Name.Equals(chatRoomToJoin?.Name)).ToList();
 
                 // Clients can only be in one public room at a time, remove the client from the previous room
                 if (chatRoomsToLeave.Any())
                 {
                     foreach (ChatRoom chatRoom in chatRoomsToLeave)
                     {
-                        chatRoom.Clients.Remove(client.Id);
+                        chatRoom.Clients.Remove(client);
+                    }
+                }
+
+                lock (callbackLock) 
+                {
+                    foreach (var callback in _clientCallbacks.Values) 
+                    {
+                        callback.UpdatePublicChatRooms(new ObservableCollection<ChatRoom>(_chatRooms.Values));
                     }
                 }
             }
         }
 
-        public bool CanCreateChatRoom(Guid chatRoomId, string chatRoomName)
+        public ChatRoom GetChatRoom(Guid chatRoomId) 
+        {
+            lock (chatRoomLock) 
+            {
+                if (_chatRooms.ContainsKey(chatRoomId))
+                {
+                    return _chatRooms[chatRoomId];
+                }
+                else 
+                {
+                    return null;
+                }
+            }
+        }
+
+        public bool CanCreatePublicChatRoom(Guid chatRoomId, string chatRoomName)
         {
             lock (chatRoomLock)
             {
@@ -166,51 +184,60 @@ namespace ChatAppServiceLibrary
             }
         }
 
-        private bool CanCreatePrivateChatRoom(Client sender, Client receiver)
+        private bool CanCreatePrivateChatRoom(string chatRoomName)
         {
             lock (chatRoomLock)
             {
-                return !_chatRooms.Values.Any(cr => cr.Name.Equals($"{sender.Id} {receiver.Id}") || cr.Name.Equals($"{receiver.Id} {sender.Id}"));
+                return !_chatRooms.Values.Any(cr => cr.Name.Equals(chatRoomName));
             }
         }
 
-        private void CreatePrivateChatRoom(ChatRoomRequest chatRoomRequest, Client sender, Client receiver)
+        public ChatRoom CreateChatRoom(ChatRoomRequest chatRoomRequest) 
         {
-            lock (chatRoomLock)
+            ChatRoom chatRoom;
+
+            lock (chatRoomLock) 
             {
-                //bool anyRooms = _chatRooms.Values.Any(cr => !cr.IsPublic && cr.Clients.All(id => id == sender.Id || id == receiver.Id));
-
-                //if (!anyRooms)
-                //{
-
-                //}
-                ChatRoom createdRoom = CreateRoom(chatRoomRequest, new List<Guid>() { sender.Id, receiver.Id }, false);
-
-                lock (callbackLock)
+                // allow a user to create a public or private chat room
+                // if the room is private and it already exist, just return the id of that room to the user
+                // if the room is public, they will can the "can create room" check first
+                if (chatRoomRequest.IsPublic)
                 {
-                    IChatManagerCallback senderCallback = _clientCallbacks[sender.Id];
-                    IChatManagerCallback receiverCallback = _clientCallbacks[receiver.Id];
-                    senderCallback.CreatePrivateRoom(createdRoom);
-                    receiverCallback.CreatePrivateRoom(createdRoom);
+                    // Create a public room
+                    chatRoom = CreateChatRoom(chatRoomRequest);
                 }
-            }
-        }
-
-        public void CreatePublicChatRoom(ChatRoomRequest chatRoomRequest, List<Guid> clients)
-        {
-            lock (chatRoomLock)
-            {
-                _ = CreateRoom(chatRoomRequest, clients, true);
-
-                lock (_clientCallbacks)
+                else 
                 {
-                    foreach (IChatManagerCallback callback in _clientCallbacks.Values)
+                    // Create a private room
+                    if (CanCreatePrivateChatRoom(chatRoomRequest.Name))
                     {
-                        callback.UpdatePublicChatRooms(new ObservableCollection<ChatRoom>(_chatRooms.Values));
+                        chatRoom = CreateRoom(chatRoomRequest);
+                    }
+                    else 
+                    {
+                        chatRoom = _chatRooms.Values.First(cr => cr.Name.Equals(chatRoomRequest.Name));   
                     }
                 }
             }
+
+            return chatRoom; 
         }
+
+        //public void CreatePublicChatRoom(ChatRoomRequest chatRoomRequest, List<Guid> clients)
+        //{
+        //    lock (chatRoomLock)
+        //    {
+        //        _ = CreatePublicRoom(chatRoomRequest, clients);
+
+        //        lock (_clientCallbacks)
+        //        {
+        //            foreach (IChatManagerCallback callback in _clientCallbacks.Values)
+        //            {
+        //                callback.UpdatePublicChatRooms(new ObservableCollection<ChatRoom>(_chatRooms.Values));
+        //            }
+        //        }
+        //    }
+        //}
 
         private ObservableCollection<ChatRoom> GetAvailableRooms()
         {
@@ -220,16 +247,17 @@ namespace ChatAppServiceLibrary
             }
         }
 
-        private ChatRoom CreateRoom(ChatRoomRequest chatRoomRequest, List<Guid> clients, bool isPublic)
+        private ChatRoom CreateRoom(ChatRoomRequest chatRoomRequest) 
         {
             ChatRoom room = new ChatRoom()
             {
                 Id = Guid.NewGuid(),
-                Clients = clients,
-                IsPublic = isPublic,
+                Clients = new List<Client>(chatRoomRequest.Clients),
+                IsPublic = chatRoomRequest.IsPublic,
                 Name = chatRoomRequest.Name,
-                SenderTitle = chatRoomRequest.SenderTitle,
-                ReceiverTitle = chatRoomRequest.ReceiverTitle
+                SenderTitle = !chatRoomRequest.IsPublic ? chatRoomRequest.Clients.First().Name : null,
+                ReceiverTitle = !chatRoomRequest.IsPublic ? chatRoomRequest.Clients.Last().Name : null,
+                Messages = new List<Message>()
             };
 
             // Ensure that no one that is reading will get incorrect data         
@@ -237,5 +265,21 @@ namespace ChatAppServiceLibrary
 
             return room;
         }
+
+        //private ChatRoom CreatePublicRoom(ChatRoomRequest chatRoomRequest, List<Guid> clients)
+        //{
+        //    ChatRoom room = new ChatRoom()
+        //    {
+        //        Id = chatRoomRequest.ChatRoomId,
+        //        Clients = clients,
+        //        IsPublic = true,
+        //        Name = chatRoomRequest.Name,
+        //    };
+
+        //    // Ensure that no one that is reading will get incorrect data         
+        //    _chatRooms.Add(room.Id, room);
+
+        //    return room;
+        //}
     }
 }

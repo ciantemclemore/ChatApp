@@ -14,9 +14,10 @@ namespace ChatAppServiceLibrary.DataContracts
         public string Name { get; set; }
 
         [DataMember]
-        public string SenderTitle { get; set; }
+        public List<Client> Clients { get; set; }
 
         [DataMember]
-        public string ReceiverTitle { get; set; }
+        public bool IsPublic { get; set; }
+
     }
 }

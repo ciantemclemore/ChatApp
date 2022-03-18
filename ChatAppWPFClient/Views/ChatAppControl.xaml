@@ -47,8 +47,8 @@
                 <Label Grid.Row="0" Content="Private Rooms" FontWeight="SemiBold" />
                 <ListView Grid.Row="1" Background="Transparent" 
                           BorderThickness="0"
-                          ItemsSource="{Binding ChatRooms}"
-                          DisplayMemberPath="ReceiverTitle"
+                          ItemsSource="{Binding ChatRooms, UpdateSourceTrigger=PropertyChanged}"
+                          DisplayMemberPath="Name"
                           SelectedItem="{Binding SelectedChatRoom}">
                            
                 </ListView>
@@ -70,8 +70,8 @@
 
             <ListView Grid.Row="0" Grid.ColumnSpan="2" Background="Transparent" 
                           BorderThickness="0"
-                          ItemsSource="{Binding ChatRooms}"
-                          SelectedItem="{Binding SelectedChatRoom}">
+                          ItemsSource="{ Binding CurrentMessages, UpdateSourceTrigger=PropertyChanged}"
+                          DisplayMemberPath="Content">
 
             </ListView>
             <TextBox Grid.Row="1" Grid.Column="0"
@@ -105,7 +105,7 @@
             </ListView>
 
             <Button Grid.Row="2" Content="Send Private Message" 
-                    Margin="10" Command="{Binding SendPrivateMessageCommand}"
+                    Margin="10" Command="{Binding CreatePrivateRoomCommand}"
                     />
         </Grid>
         <!--#endregion-->
