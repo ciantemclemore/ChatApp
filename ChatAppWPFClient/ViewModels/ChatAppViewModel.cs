@@ -215,6 +215,7 @@ namespace ChatAppWPFClient.ViewModels
 
         public void ReceiveMessage(Message message)
         {
+            // TODO: Have a little bug to fix, private messages go to the channel you're selected on instead of the correct channel
             lock (_sync)
             {
                 // Place the message in neccessary chat room, if it doesn't exist locally, create it
