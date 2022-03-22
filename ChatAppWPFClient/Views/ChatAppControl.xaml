@@ -15,7 +15,7 @@
 
 
         <!--#region Left Column: Chat Rooms-->
-        <Grid Grid.Column="0">
+        <Grid Grid.Column="0" Background="#2F3136">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
@@ -30,7 +30,7 @@
                 </Grid.RowDefinitions>
 
                 <!--Label and add title button-->
-                <Label Grid.Row="0" Content="Public Rooms" FontWeight="SemiBold" />
+                <Label Grid.Row="0" Content="Public Rooms" FontWeight="Medium" Foreground="Gray" />
                 <Button Grid.Row="0" 
                         Content="Create Room" 
                         HorizontalAlignment="Right" 
@@ -39,7 +39,8 @@
                 <!--Public rooms listview-->
                 <ListView Grid.Row="1"  Background="Transparent" BorderThickness="0"
                           ItemsSource="{Binding PublicChatRooms, UpdateSourceTrigger=PropertyChanged}"
-                          DisplayMemberPath="DisplayName" SelectedValue="{Binding SelectedChatRoom}"/>
+                          DisplayMemberPath="DisplayName" SelectedValue="{Binding SelectedChatRoom}"
+                          Foreground="White"/>
             </Grid>
 
             <!--Private Rooms Grid-->
@@ -49,12 +50,14 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-                <Label Grid.Row="0" Content="Private Rooms" FontWeight="SemiBold" />
+                <Label Grid.Row="0" Content="Private Rooms" FontWeight="Medium" Foreground="Gray" />
                 <ListView Grid.Row="1" Background="Transparent" 
                           BorderThickness="0"
                           ItemsSource="{Binding PrivateChatRooms, UpdateSourceTrigger=PropertyChanged}"
                           DisplayMemberPath="DisplayName"
-                          SelectedValue="{Binding SelectedChatRoom}">
+                          SelectedValue="{Binding SelectedChatRoom}"
+                          Foreground="White" 
+                          ItemContainerStyle="{StaticResource PrivateUserCard}">
                            
                 </ListView>
             </Grid>
@@ -62,35 +65,70 @@
         <!--#endregion-->
         
         <!--#region Message Grid-->
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="1" Background="#4c5057">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition />
+                <RowDefinition Height="70"/>
             </Grid.RowDefinitions>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="50"/>
-            </Grid.ColumnDefinitions>
+            <Border Grid.Row="0" Grid.ColumnSpan="2"  BorderBrush="#2F3136" BorderThickness="0,0,0,2">
+                <Grid HorizontalAlignment="Stretch" Margin="8">
+                    <Label Content="{Binding SelectedChatRoom.DisplayName, UpdateSourceTrigger=PropertyChanged}"
+                           Foreground="White"
+                           FontWeight="Bold"
+                           Margin="5,0,5,0"
+                           VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
 
-            <ListView Grid.Row="0" Grid.ColumnSpan="2" Background="Transparent" 
+            <ListView Grid.Row="1" Grid.ColumnSpan="2" Background="Transparent" 
                           BorderThickness="0"
                           ItemsSource="{ Binding CurrentMessages, UpdateSourceTrigger=PropertyChanged}"
-                          DisplayMemberPath="Content">
+                          DisplayMemberPath="Content" Foreground="White"
+                          ItemContainerStyle="{StaticResource ChatItem}">
 
             </ListView>
-            <TextBox Grid.Row="1" Grid.Column="0"
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="90" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Row="1"
+                         Grid.ColumnSpan="2"
+                         Height="50"
+                         Text="Message @Username"
+                         Style="{StaticResource MessageSendBox}" />
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Margin="0,0,16,0">
+
+                    <Image Source="./Icons/send.png"
+                           Width="20" Height="20"
+                           RenderOptions.BitmapScalingMode="Fant"
+                           Margin="5,5,5,0" />
+
+                </StackPanel>
+
+            </Grid>
+
+
+            <!--<TextBox Grid.Row="2" Grid.Column="0"
                      Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}">
 
             </TextBox>
-            <Button Grid.Row="1" Grid.Column="1" 
-                    Content="Send" Command="{Binding SendMessageCommand}" />
+            <Button Grid.Row="2" Grid.Column="1" 
+                    Content="Send" Command="{Binding SendMessageCommand}" />-->
 
         </Grid>
         <!--#endregion-->
         
         <!--#region Online Users Grid-->
-        <Grid Grid.Column="2">
+        <Grid Grid.Column="2" Background="#2F3136">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*" />
@@ -98,15 +136,16 @@
             </Grid.RowDefinitions>
 
             <Label Grid.Row="0" Content="Online Users" 
-                   FontWeight="SemiBold"
+                   FontWeight="Medium" Foreground="Gray"
                    HorizontalAlignment="Center"/>
 
             <!--User listview-->
             <ListView Grid.Row="1" DisplayMemberPath="Name" 
                           ItemsSource="{Binding OnlineClients, UpdateSourceTrigger=PropertyChanged}" 
                           SelectedItem="{Binding SelectedUser}"
-                          Background="Transparent" 
-                          BorderThickness="0" >
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource OnlineUserCard}"
+                          BorderThickness="0" Foreground="White">
             </ListView>
 
             <Button Grid.Row="2" Content="Send Private Message" 

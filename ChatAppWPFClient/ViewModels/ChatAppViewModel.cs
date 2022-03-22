@@ -30,6 +30,7 @@ namespace ChatAppWPFClient.ViewModels
         private ChatRoom _chatRoom;
         private Client _selectedUser;
         private string _messageText;
+        private string _lastMessageText;
 
         public ObservableCollection<Message> CurrentMessages
         {
@@ -71,6 +72,16 @@ namespace ChatAppWPFClient.ViewModels
             set
             {
                 _messageText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string LastMessageText
+        {
+            get => _lastMessageText;
+            set
+            {
+                _lastMessageText = value;
                 OnPropertyChanged();
             }
         }
@@ -203,6 +214,9 @@ namespace ChatAppWPFClient.ViewModels
                     TimeStamp = DateTime.Now
                 };
             }
+
+            LastMessageText = MessageText;
+            MessageText = String.Empty;
 
             await TcpClient.SendMessageAsync(newMessage);
         }
