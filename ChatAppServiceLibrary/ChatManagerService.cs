@@ -69,11 +69,14 @@ namespace ChatAppServiceLibrary
                         }
                     }
 
-                    // Need to also provide the new client with the available rooms
-                    foreach (Guid clientKey in _clientCallbacks.Keys)
+                    lock (chatRoomLock)
                     {
-                        IChatManagerCallback callback = _clientCallbacks[clientKey];
-                        callback.UpdatePublicChatRooms(GetAvailableRooms());
+                        // Need to also provide the new client with the available rooms
+                        foreach (Guid clientKey in _clientCallbacks.Keys)
+                        {
+                            IChatManagerCallback callback = _clientCallbacks[clientKey];
+                            callback.UpdatePublicChatRooms(GetAvailableRooms());
+                        }
                     }
                 }
             }
@@ -100,7 +103,7 @@ namespace ChatAppServiceLibrary
                     {
                         // get the receiver callback since they are online
                         receiverCallback = _clientCallbacks[message.Receiver.Id];
-                        
+
                         // send the message to both clients
                         senderCallback.ReceiveMessage(message);
                         receiverCallback.ReceiveMessage(message);
@@ -186,9 +189,9 @@ namespace ChatAppServiceLibrary
                 }
 
                 // Close a chat room if it is completely empty
-                foreach (ChatRoom chatRoom in _chatRooms.Values) 
+                foreach (ChatRoom chatRoom in _chatRooms.Values)
                 {
-                    if (!chatRoom.Clients.Any()) 
+                    if (!chatRoom.Clients.Any())
                     {
                         _ = _chatRooms.Remove(chatRoom.Id);
                     }
@@ -222,11 +225,13 @@ namespace ChatAppServiceLibrary
                 {
                     _ = CreateRoom(chatRoomRequest);
 
+                    var availableRooms = GetAvailableRooms();
+
                     lock (_clientCallbacks)
                     {
                         foreach (var callback in _clientCallbacks.Values)
                         {
-                            callback.UpdatePublicChatRooms(new ObservableCollection<ChatRoom>(_chatRooms.Values.Where(cr => cr.IsPublic)));
+                            callback.UpdatePublicChatRooms(new ObservableCollection<ChatRoom>(availableRooms));
                         }
                     }
                     return true;
@@ -262,10 +267,7 @@ namespace ChatAppServiceLibrary
 
         private ObservableCollection<ChatRoom> GetAvailableRooms()
         {
-            lock (chatRoomLock)
-            {
-                return new ObservableCollection<ChatRoom>(_chatRooms.Values);
-            }
+            return new ObservableCollection<ChatRoom>(_chatRooms.Values.Where(cr => cr.IsPublic));
         }
 
         private ChatRoom CreateRoom(ChatRoomRequest chatRoomRequest)

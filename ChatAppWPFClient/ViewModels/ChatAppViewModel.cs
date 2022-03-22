@@ -24,8 +24,8 @@ namespace ChatAppWPFClient.ViewModels
 
         #region Full View Properties
         private ObservableCollection<Message> _currentMessages = new ObservableCollection<Message>();
-        private CollectionViewSource _publicChatRoomCollection = new CollectionViewSource();
-        private CollectionViewSource _privateChatRoomCollection = new CollectionViewSource();
+        private ObservableCollection<ChatRoom> _privateChatRooms = new ObservableCollection<ChatRoom>();
+        private ObservableCollection<ChatRoom> _publicChatRooms = new ObservableCollection<ChatRoom>();
         private ObservableCollection<Client> _clients = new ObservableCollection<Client>();
         private ChatRoom _chatRoom;
         private Client _selectedUser;
@@ -84,14 +84,30 @@ namespace ChatAppWPFClient.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        public ObservableCollection<ChatRoom> PublicChatRooms
+        {
+            get => _publicChatRooms;
+            set
+            {
+                _publicChatRooms = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<ChatRoom> PrivateChatRooms
+        {
+            get => _privateChatRooms;
+            set
+            {
+                _privateChatRooms = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
         #region View Model Properties
         Dictionary<Guid, ObservableCollection<Message>> ListViewMessages { get; set; } = new Dictionary<Guid, ObservableCollection<Message>>();
-
-        public ObservableCollection<ChatRoom> PublicChatRooms { get; set; } = new ObservableCollection<ChatRoom>();
-
-        public ObservableCollection<ChatRoom> PrivateChatRooms { get; set; } = new ObservableCollection<ChatRoom>();
 
         public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel;
         #endregion
