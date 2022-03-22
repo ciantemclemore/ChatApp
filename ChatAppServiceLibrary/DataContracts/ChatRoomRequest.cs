@@ -11,7 +11,10 @@ namespace ChatAppServiceLibrary.DataContracts
     public class ChatRoomRequest
     {
         [DataMember]
-        public string Name { get; set; }
+        public string ServerName { get; set; }
+
+        [DataMember]
+        public string DisplayName { get; set; }
 
         [DataMember]
         public List<Client> Clients { get; set; }

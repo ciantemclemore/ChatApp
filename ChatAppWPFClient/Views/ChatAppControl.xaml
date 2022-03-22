@@ -31,10 +31,15 @@
 
                 <!--Label and add title button-->
                 <Label Grid.Row="0" Content="Public Rooms" FontWeight="SemiBold" />
-                <Button Grid.Row="0" Content="Create Room" HorizontalAlignment="Right" />
+                <Button Grid.Row="0" 
+                        Content="Create Room" 
+                        HorizontalAlignment="Right" 
+                        Command="{Binding CreatePublicRoomCommand}" />
 
-                <!--Title listview-->
-                <ListView Grid.Row="1"  Background="Transparent" BorderThickness="0" />
+                <!--Public rooms listview-->
+                <ListView Grid.Row="1"  Background="Transparent" BorderThickness="0"
+                          ItemsSource="{Binding PublicChatRooms, UpdateSourceTrigger=PropertyChanged}"
+                          DisplayMemberPath="DisplayName" SelectedValue="{Binding SelectedChatRoom}"/>
             </Grid>
 
             <!--Private Rooms Grid-->
@@ -47,9 +52,9 @@
                 <Label Grid.Row="0" Content="Private Rooms" FontWeight="SemiBold" />
                 <ListView Grid.Row="1" Background="Transparent" 
                           BorderThickness="0"
-                          ItemsSource="{Binding ChatRooms, UpdateSourceTrigger=PropertyChanged}"
-                          DisplayMemberPath="Name"
-                          SelectedItem="{Binding SelectedChatRoom}">
+                          ItemsSource="{Binding PrivateChatRooms, UpdateSourceTrigger=PropertyChanged}"
+                          DisplayMemberPath="DisplayName"
+                          SelectedValue="{Binding SelectedChatRoom}">
                            
                 </ListView>
             </Grid>

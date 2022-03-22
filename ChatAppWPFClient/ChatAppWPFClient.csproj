@@ -57,17 +57,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ChatManagerServiceClient.cs" />
+    <Compile Include="ChatServiceManagerClient.cs" />
     <Compile Include="Commands\CommandBase.cs" />
     <Compile Include="Commands\NavigateCommand.cs" />
     <Compile Include="IWindow.cs" />
     <Compile Include="Stores\NavigationStore.cs" />
+    <Compile Include="ViewModels\CreatePublicRoomViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="ViewModels\ChatAppViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\ChatAppControl.xaml.cs">
       <DependentUpon>ChatAppControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreatePublicRoomControl.xaml.cs">
+      <DependentUpon>CreatePublicRoomControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LoginControl.xaml.cs">
       <DependentUpon>LoginControl.xaml</DependentUpon>
@@ -86,6 +90,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\ChatAppControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CreatePublicRoomControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -9,7 +9,5 @@ namespace ChatAppWPFClient
     public interface IWindow
     {
         Action Close { get; set; }
-
-        Action Open { get; set; }
     }
 }

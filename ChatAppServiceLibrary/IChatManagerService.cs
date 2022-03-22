@@ -16,16 +16,13 @@ namespace ChatAppServiceLibrary
         void SendMessage(Message message);
 
         [OperationContract(IsOneWay = false)]
-        bool CanCreatePublicChatRoom(Guid chatRoomId, string chatRoomName);
+        ChatRoom CreatePrivateChatRoom(ChatRoomRequest chatRoomRequest);
 
         [OperationContract(IsOneWay = false)]
-        ChatRoom CreateChatRoom(ChatRoomRequest chatRoomRequest);
+        bool CreatePublicChatRoom(ChatRoomRequest chatRoomRequest);
 
         [OperationContract(IsOneWay = true)]
         void JoinChatRoom(Guid chatRoomId, Client client);
-
-        [OperationContract(IsOneWay = false)]
-        ChatRoom GetChatRoom(Guid chatRoomId);
 
         [OperationContract(IsOneWay = true, IsTerminating = true)]
         void Logout(string userName);

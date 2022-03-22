@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using ChatAppWPFClient.ViewModels;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ChatAppWPFClient.Views
 {
@@ -23,6 +13,23 @@ namespace ChatAppWPFClient.Views
         public ChatAppControl()
         {
             InitializeComponent();
+            Loaded += async (s, e) => await ChatAppControl_Loaded(s, e);
+        }
+
+        private Task ChatAppControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            Window window = Window.GetWindow(this);
+            window.Closing += async (s, o) => await Window_Closing(s, o);
+            return Task.CompletedTask;
+        }
+
+        private async Task Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (DataContext is ChatAppViewModel vm)
+            {
+                await vm.TcpClient.LogoutAsync(vm.LocalClient.Name);
+                vm.TcpClient.Close();
+            }
         }
     }
 }

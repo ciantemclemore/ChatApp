@@ -4,42 +4,47 @@ using ChatAppWPFClient.Stores;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
+using System.Windows.Data;
+using System.Windows.Input;
 
 namespace ChatAppWPFClient.ViewModels
 {
     [ServiceBehavior(UseSynchronizationContext = false)]
     public class ChatAppViewModel : ViewModelBase, IChatManagerServiceCallback, IWindow
     {
+        #region Client/Connection Members
         public Client LocalClient { get; set; }
+
         public ChatManagerServiceClient TcpClient { get; set; }
-        public Action Close { get ; set; }
-        public Action Open { get ; set; }
-        
+        #endregion
+
+        #region Full View Properties
         private ObservableCollection<Message> _currentMessages = new ObservableCollection<Message>();
-        public ObservableCollection<Message> CurrentMessages 
+        private CollectionViewSource _publicChatRoomCollection = new CollectionViewSource();
+        private CollectionViewSource _privateChatRoomCollection = new CollectionViewSource();
+        private ObservableCollection<Client> _clients = new ObservableCollection<Client>();
+        private ChatRoom _chatRoom;
+        private Client _selectedUser;
+        private string _messageText;
+
+        public ObservableCollection<Message> CurrentMessages
         {
             get => _currentMessages;
-            set 
+            set
             {
                 _currentMessages = value;
                 OnPropertyChanged();
             }
         }
 
-        Dictionary<Guid, ObservableCollection<Message>> ListViewMessages { get; set; } = new Dictionary<Guid, ObservableCollection<Message>>();
-
-        public ObservableCollection<ChatRoom> ChatRooms { get; set; } = new ObservableCollection<ChatRoom> ();
-
-        private ChatRoom _chatRoom;
-        public ChatRoom SelectedChatRoom 
+        public ChatRoom SelectedChatRoom
         {
             get => _chatRoom;
-            set 
+            set
             {
                 _chatRoom = value;
                 OnPropertyChanged();
@@ -50,72 +55,104 @@ namespace ChatAppWPFClient.ViewModels
                 CurrentMessages = ListViewMessages[_chatRoom.Id];
             }
         }
-
-        private RelayCommand CreateRoomCommand { get; set; }
-        public RelayCommand CreatePrivateRoomCommand { get; set; }
-        public RelayCommand SendMessageCommand { get; set; }
-
-        private Client _selectedUser = null;
-        public Client SelectedUser 
+        public Client SelectedUser
         {
             get => _selectedUser;
-            set 
+            set
             {
                 _selectedUser = value;
                 OnPropertyChanged();
             }
         }
 
-        private string _messageText;
-        public string MessageText 
+        public string MessageText
         {
             get => _messageText;
-            set 
+            set
             {
                 _messageText = value;
                 OnPropertyChanged();
             }
         }
 
-        private ObservableCollection<Client> _clients = new ObservableCollection<Client>();
-        public ObservableCollection<Client> OnlineClients 
+        public ObservableCollection<Client> OnlineClients
         {
             get => _clients;
-            set 
+            set
             {
                 _clients = value;
                 OnPropertyChanged();
             }
         }
+        #endregion
 
-        private readonly object _sync = new object();
-        private readonly NavigationStore _navigationStore;
+        #region View Model Properties
+        Dictionary<Guid, ObservableCollection<Message>> ListViewMessages { get; set; } = new Dictionary<Guid, ObservableCollection<Message>>();
+
+        public ObservableCollection<ChatRoom> PublicChatRooms { get; set; } = new ObservableCollection<ChatRoom>();
+
+        public ObservableCollection<ChatRoom> PrivateChatRooms { get; set; } = new ObservableCollection<ChatRoom>();
 
         public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel;
+        #endregion
+
+        #region View Commands
+        public RelayCommand CreatePrivateRoomCommand { get; set; }
+
+        public RelayCommand SendMessageCommand { get; set; }
+
+        public RelayCommand CreatePublicRoomCommand { get; set; }
+
+        public ICommand NavigateChatAppControl { get; set; }
+        #endregion
+
+        #region Fields
+        private readonly object _sync = new object();
+        private readonly NavigationStore _navigationStore;
+        #endregion
+
+        public Action Close { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
 
         public ChatAppViewModel(NavigationStore navigationStore)
         {
             _navigationStore = navigationStore;
             _navigationStore.CurrentViewModelChanged += _navigationStore_CurrentViewModelChanged;
-            CreatePrivateRoomCommand = new RelayCommand(async (o) => await CreateLocalPrivateRoom(), (o) => (SelectedUser != null) && !ChatRooms.Any(cr => cr.Name.Equals($"{SelectedUser.Name}")));
+            CreatePrivateRoomCommand = new RelayCommand(async (o) => await CreatePrivateRoom(), (o) => (SelectedUser != null) && !PrivateChatRooms.Any(cr => cr.DisplayName.Equals($"{SelectedUser.Name}")));
+            CreatePublicRoomCommand = new RelayCommand((o) => CreatePublicRoom());
             SendMessageCommand = new RelayCommand(async (o) => await SendMessage(), (o) => !string.IsNullOrEmpty(MessageText) && SelectedChatRoom != null);
         }
 
-        private async Task CreateLocalPrivateRoom() 
+        private async Task CreatePrivateRoom()
         {
-            ChatRoom chatRoom = await TcpClient.CreateChatRoomAsync(new ChatRoomRequest() 
+            ChatRoom chatRoom = await TcpClient.CreatePrivateChatRoomAsync(new ChatRoomRequest()
             {
                 Clients = new List<Client>() { LocalClient, SelectedUser },
                 IsPublic = false,
-                Name = SelectedUser.Name
+                ServerName = $"{LocalClient.Id} {SelectedUser.Id}",
+                DisplayName = SelectedUser.Name
             });
 
-            ChatRooms.Add(chatRoom);
+            if (!PrivateChatRooms.Any(cr => cr.Id == chatRoom.Id))
+            {
+                PrivateChatRooms.Add(chatRoom);
+            }
+
             SelectedChatRoom = chatRoom;
             SelectedUser = null;
         }
 
-        private async Task SendMessage() 
+        private void CreatePublicRoom()
+        {
+            CreatePublicRoomViewModel createPublicRoomViewModel = new CreatePublicRoomViewModel(_navigationStore);
+            createPublicRoomViewModel.LocalClient = LocalClient;
+            createPublicRoomViewModel.TcpClient = TcpClient;
+            createPublicRoomViewModel.ReturnToViewModel = this;
+            NavigateChatAppControl = new NavigateCommand<CreatePublicRoomViewModel>(_navigationStore, () => createPublicRoomViewModel);
+            NavigateChatAppControl.Execute(null);
+        }
+
+        private async Task SendMessage()
         {
             Message newMessage;
 
@@ -129,21 +166,21 @@ namespace ChatAppWPFClient.ViewModels
                 {
                     Id = Guid.NewGuid(),
                     ChatRoomId = SelectedChatRoom.Id,
-                    ChatRoomName = SelectedChatRoom.Name,
+                    ChatRoomName = SelectedChatRoom.DisplayName,
                     Content = MessageText,
                     Receiver = receiver,
                     Sender = LocalClient,
                     TimeStamp = DateTime.Now
                 };
             }
-            else 
+            else
             {
                 // Create a message for all users in a public room
                 newMessage = new Message()
                 {
                     Id = Guid.NewGuid(),
                     ChatRoomId = SelectedChatRoom.Id,
-                    ChatRoomName = SelectedChatRoom.Name,
+                    ChatRoomName = SelectedChatRoom.DisplayName,
                     Content = MessageText,
                     Receiver = null,
                     Sender = LocalClient,
@@ -159,38 +196,19 @@ namespace ChatAppWPFClient.ViewModels
             OnPropertyChanged(nameof(CurrentViewModel));
         }
 
-        private void InputDialog_OnLoginButtonClicked()
-        {
-            
-
-            //// create a client
-            //Client newClient = new Client()
-            //{
-            //    Id = Guid.NewGuid(),
-            //    Name = inputDialog.Answer,
-            //    CreatedOn = DateTime.Now,
-            //    TitleId = null
-            //};
-
-            //while (!client.Login(newClient)) 
-            //{
-            //    inputDialog.lblQuestion.Content = "Try again, login name already exists:";
-            //}
-
-        }
 
         public void ReceiveMessage(Message message)
         {
             lock (_sync)
             {
                 // Place the message in neccessary chat room, if it doesn't exist locally, create it
-                ChatRoom chatRoom = ChatRooms.FirstOrDefault(cr => cr.Id == message.ChatRoomId);
+                ChatRoom chatRoom = PrivateChatRooms.Union(PublicChatRooms).FirstOrDefault(cr => cr.Id == message.ChatRoomId);
 
                 if (chatRoom != null)
                 {
                     chatRoom.Messages.Add(message);
                 }
-                else 
+                else
                 {
                     ChatRoom newChatRoom = new ChatRoom()
                     {
@@ -198,12 +216,12 @@ namespace ChatAppWPFClient.ViewModels
                         Clients = new List<Client>() { message.Sender, message.Receiver },
                         IsPublic = false,
                         Messages = new List<Message>() { message },
-                        Name = message.Sender.Name,
+                        DisplayName = message.Sender.Name,
                         ReceiverTitle = message.Receiver.Name,
                         SenderTitle = message.Sender.Name,
                     };
 
-                    ChatRooms.Add(newChatRoom); 
+                    PrivateChatRooms.Add(newChatRoom);
                     SelectedChatRoom = newChatRoom;
                 }
 
@@ -211,41 +229,14 @@ namespace ChatAppWPFClient.ViewModels
             }
         }
 
-        public void CloseWindow()
-        {
-            Close?.Invoke();
-        }
-
-        public void OpenWindow()
-        {
-            Open?.Invoke();
-        }
-
-        public void UpdatePublicChatRooms(ChatRoom[] chatRooms)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void CreatePrivateRoom(ChatRoom chatRoom)
-        {
-            //throw new NotImplementedException();
-        }
-
         public void UpdateOnlineClients(List<Client> clients)
         {
-            //OnlineClients = new ObservableCollection<Client>(clients.Where(c => c.Id != LocalClient.Id));
-            foreach (var client in clients) 
-            {
-                if (client.Id != LocalClient.Id && !OnlineClients.Any(c => c.Id == client.Id)) 
-                {
-                    OnlineClients.Add(client);
-                }
-            }
+            OnlineClients = new ObservableCollection<Client>(clients.Where(c => c.Id != LocalClient.Id));
         }
 
         public void UpdatePublicChatRooms(List<ChatRoom> chatRooms)
         {
-            //throw new NotImplementedException();
+            PublicChatRooms = new ObservableCollection<ChatRoom>(chatRooms);
         }
     }
 }

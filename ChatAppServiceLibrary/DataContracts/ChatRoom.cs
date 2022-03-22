@@ -18,7 +18,10 @@ namespace ChatAppServiceLibrary.DataContracts
         public Guid Id { get; set; }
 
         [DataMember]
-        public string Name { get; set; }
+        public string DisplayName { get; set; }
+
+        [DataMember]
+        public string ServerName { get; set; }
 
         [DataMember]
         public string SenderTitle { get; set; }

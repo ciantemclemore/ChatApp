@@ -10,14 +10,10 @@ namespace ChatAppServiceLibrary
         [OperationContract(IsOneWay = true)]
         void ReceiveMessage(Message message);
 
-
         [OperationContract(IsOneWay = true)]
         void UpdateOnlineClients(ObservableCollection<Client> clients);
 
         [OperationContract(IsOneWay = true)]
         void UpdatePublicChatRooms(ObservableCollection<ChatRoom> chatRooms);
-
-        [OperationContract(IsOneWay = true)]
-        void CreatePrivateRoom(ChatRoom chatRoom);
     }
 }
