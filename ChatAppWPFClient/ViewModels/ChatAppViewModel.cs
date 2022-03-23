@@ -30,7 +30,6 @@ namespace ChatAppWPFClient.ViewModels
         private ChatRoom _chatRoom;
         private Client _selectedUser;
         private string _messageText;
-        private string _lastMessageText;
 
         public ObservableCollection<Message> CurrentMessages
         {
@@ -47,13 +46,17 @@ namespace ChatAppWPFClient.ViewModels
             get => _chatRoom;
             set
             {
-                _chatRoom = value;
-                OnPropertyChanged();
-                if (!ListViewMessages.ContainsKey(_chatRoom.Id))
+                if (value != null)
                 {
-                    ListViewMessages.Add(_chatRoom.Id, new ObservableCollection<Message>());
+                    _chatRoom = value;
+                    OnPropertyChanged();
+
+                    if (!ListViewMessages.ContainsKey(_chatRoom.Id))
+                    {
+                        ListViewMessages.Add(_chatRoom.Id, new ObservableCollection<Message>());
+                    }
+                    CurrentMessages = ListViewMessages[_chatRoom.Id];
                 }
-                CurrentMessages = ListViewMessages[_chatRoom.Id];
             }
         }
         public Client SelectedUser
@@ -72,16 +75,6 @@ namespace ChatAppWPFClient.ViewModels
             set
             {
                 _messageText = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string LastMessageText
-        {
-            get => _lastMessageText;
-            set
-            {
-                _lastMessageText = value;
                 OnPropertyChanged();
             }
         }
@@ -215,7 +208,6 @@ namespace ChatAppWPFClient.ViewModels
                 };
             }
 
-            LastMessageText = MessageText;
             MessageText = String.Empty;
 
             await TcpClient.SendMessageAsync(newMessage);
@@ -275,6 +267,13 @@ namespace ChatAppWPFClient.ViewModels
         public void UpdatePublicChatRooms(List<ChatRoom> chatRooms)
         {
             PublicChatRooms = new ObservableCollection<ChatRoom>(chatRooms);
+
+            // Must reset the current chat room, using "SelectedValue" property on listview retriggers the call on list reinitialization
+            if (SelectedChatRoom != null) 
+            {
+                ChatRoom currentChatRoom = SelectedChatRoom;
+                SelectedChatRoom = currentChatRoom.IsPublic ? PublicChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id) : PrivateChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id);
+            }
         }
     }
 }

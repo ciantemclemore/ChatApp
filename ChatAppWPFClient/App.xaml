@@ -8,7 +8,7 @@
                 <ResourceDictionary Source="./Themes/OnlineUserCard.xaml"/>
                 <ResourceDictionary Source="./Themes/ChatItem.xaml"/>
                 <ResourceDictionary Source="./Themes/MessageSendBox.xaml" />
-                <ResourceDictionary Source="./Themes/PrivateUserCard.xaml" />
+                <ResourceDictionary Source="./Themes/ChatRoomCard.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

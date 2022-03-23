@@ -19,6 +19,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="60" />
             </Grid.RowDefinitions>
 
 
@@ -30,9 +31,10 @@
                 </Grid.RowDefinitions>
 
                 <!--Label and add title button-->
-                <Label Grid.Row="0" Content="Public Rooms" FontWeight="Medium" Foreground="Gray" />
+                <Label Grid.Row="0" Content="Public Rooms" FontWeight="Medium" Foreground="Gray"
+                       Margin="6,0,0,0"/>
                 <Button Grid.Row="0" 
-                        Content="Create Room" 
+                        Content="Create Room"
                         HorizontalAlignment="Right" 
                         Command="{Binding CreatePublicRoomCommand}" />
 
@@ -40,7 +42,7 @@
                 <ListView Grid.Row="1"  Background="Transparent" BorderThickness="0"
                           ItemsSource="{Binding PublicChatRooms, UpdateSourceTrigger=PropertyChanged}"
                           DisplayMemberPath="DisplayName" SelectedValue="{Binding SelectedChatRoom}"
-                          Foreground="White"/>
+                          Foreground="White" ItemContainerStyle="{StaticResource ChatRoomCard}"/>
             </Grid>
 
             <!--Private Rooms Grid-->
@@ -50,17 +52,40 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-                <Label Grid.Row="0" Content="Private Rooms" FontWeight="Medium" Foreground="Gray" />
+                <Label Grid.Row="0" Content="Private Rooms" FontWeight="Medium" Foreground="Gray"
+                       Margin="6,0,0,0"/>
                 <ListView Grid.Row="1" Background="Transparent" 
                           BorderThickness="0"
                           ItemsSource="{Binding PrivateChatRooms, UpdateSourceTrigger=PropertyChanged}"
                           DisplayMemberPath="DisplayName"
                           SelectedValue="{Binding SelectedChatRoom}"
                           Foreground="White" 
-                          ItemContainerStyle="{StaticResource PrivateUserCard}">
+                          ItemContainerStyle="{StaticResource ChatRoomCard}">
                            
                 </ListView>
             </Grid>
+
+            <StackPanel Grid.Row="2" 
+                        Orientation="Horizontal" 
+                        Background="#292b2F">
+
+                <Border CornerRadius="25"
+                        Width="30" Height="30"
+                        Background="#3bff6f"
+                        Margin="18,0,0,0"/>
+
+                <StackPanel VerticalAlignment="Center">
+                    <Label Content="{Binding LocalClient.Name}"
+                           Foreground="White"
+                           FontWeight="SemiBold"
+                           Margin="0,-5,0,-5"/>
+
+                    <Label Content="Online"
+                           Foreground="Gray"
+                           FontWeight="SemiBold"
+                           FontSize="10" Margin="0,-8,0,-5"/>
+                </StackPanel>
+            </StackPanel>
         </Grid>
         <!--#endregion-->
         
