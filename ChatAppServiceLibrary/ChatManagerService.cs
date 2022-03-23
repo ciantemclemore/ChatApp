@@ -184,14 +184,15 @@ namespace ChatAppServiceLibrary
                 {
                     foreach (ChatRoom chatRoom in chatRoomsToLeave)
                     {
-                        _ = chatRoom.Clients.Remove(client);
+                        Client clientToRemove = chatRoom.Clients.FirstOrDefault(c => c.Id == client.Id);
+                        _ = chatRoom.Clients.Remove(clientToRemove);
                     }
                 }
 
                 // Close a chat room if it is completely empty
-                foreach (ChatRoom chatRoom in _chatRooms.Values)
+                foreach (ChatRoom chatRoom in _chatRooms.Values.Where(cr => cr.IsPublic).ToList())
                 {
-                    if (chatRoom.IsPublic && !chatRoom.Clients.Any())
+                    if (!chatRoom.Clients.Any())
                     {
                         _ = _chatRooms.Remove(chatRoom.Id);
                     }
