@@ -123,7 +123,10 @@ namespace ChatAppWPFClient.ViewModels
 
         public RelayCommand CreatePublicRoomCommand { get; set; }
 
+        public RelayCommand OnJoinPublicRoomCommand { get; set; }
+
         public ICommand NavigateChatAppControl { get; set; }
+
         #endregion
 
         #region Fields
@@ -141,6 +144,12 @@ namespace ChatAppWPFClient.ViewModels
             CreatePrivateRoomCommand = new RelayCommand(async (o) => await CreatePrivateRoom(), (o) => (SelectedUser != null) && !PrivateChatRooms.Any(cr => cr.DisplayName.Equals($"{SelectedUser.Name}")));
             CreatePublicRoomCommand = new RelayCommand((o) => CreatePublicRoom());
             SendMessageCommand = new RelayCommand(async (o) => await SendMessage(), (o) => !string.IsNullOrEmpty(MessageText) && SelectedChatRoom != null);
+            OnJoinPublicRoomCommand = new RelayCommand(async (o) => await JoinPublicRoom(), (o) => SelectedChatRoom != null && SelectedChatRoom.IsPublic);
+        }
+
+        private async Task JoinPublicRoom() 
+        {
+            await TcpClient.JoinChatRoomAsync(SelectedChatRoom.Id, LocalClient);    
         }
 
         private async Task CreatePrivateRoom()

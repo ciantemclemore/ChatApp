@@ -172,12 +172,12 @@ namespace ChatAppServiceLibrary
                 ChatRoom chatRoomToJoin = _chatRooms[chatRoomId];
 
                 // Add the client to the new room
-                if (chatRoomToJoin != null)
+                if (chatRoomToJoin != null && !chatRoomToJoin.Clients.Any(c => c.Id == client.Id))
                 {
                     chatRoomToJoin.Clients.Add(client);
                 }
 
-                List<ChatRoom> chatRoomsToLeave = _chatRooms.Values.Where(cr => cr.IsPublic && !cr.DisplayName.Equals(chatRoomToJoin?.DisplayName)).ToList();
+                List<ChatRoom> chatRoomsToLeave = _chatRooms.Values.Where(cr => cr.IsPublic && !cr.DisplayName.Equals(chatRoomToJoin?.DisplayName) && cr.Clients.Any(c => c.Id == client.Id)).ToList();
 
                 // Clients can only be in one public room at a time, remove the client from the previous room
                 if (chatRoomsToLeave.Any())
@@ -191,7 +191,7 @@ namespace ChatAppServiceLibrary
                 // Close a chat room if it is completely empty
                 foreach (ChatRoom chatRoom in _chatRooms.Values)
                 {
-                    if (!chatRoom.Clients.Any())
+                    if (chatRoom.IsPublic && !chatRoom.Clients.Any())
                     {
                         _ = _chatRooms.Remove(chatRoom.Id);
                     }
