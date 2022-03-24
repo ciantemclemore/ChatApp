@@ -1,13 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32106.194
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatAppClient", "ChatAppClient\ChatAppClient.csproj", "{24111560-5327-4E94-89E0-F10505476C41}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatAppServiceHost", "ChatAppServiceHost\ChatAppServiceHost.csproj", "{685D2B66-B841-4003-8FBD-70FC7ACCE191}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfClient", "WcfClient\WcfClient.csproj", "{4419182A-B539-45E1-B6A8-D0DB27AA9202}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatAppServiceLibrary", "ChatAppServiceLibrary\ChatAppServiceLibrary.csproj", "{0619ED5D-4ADF-4843-A7E3-D55906745156}"
 EndProject
@@ -19,18 +15,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{24111560-5327-4E94-89E0-F10505476C41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{24111560-5327-4E94-89E0-F10505476C41}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{24111560-5327-4E94-89E0-F10505476C41}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{24111560-5327-4E94-89E0-F10505476C41}.Release|Any CPU.Build.0 = Release|Any CPU
 		{685D2B66-B841-4003-8FBD-70FC7ACCE191}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{685D2B66-B841-4003-8FBD-70FC7ACCE191}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{685D2B66-B841-4003-8FBD-70FC7ACCE191}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{685D2B66-B841-4003-8FBD-70FC7ACCE191}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4419182A-B539-45E1-B6A8-D0DB27AA9202}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4419182A-B539-45E1-B6A8-D0DB27AA9202}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4419182A-B539-45E1-B6A8-D0DB27AA9202}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4419182A-B539-45E1-B6A8-D0DB27AA9202}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0619ED5D-4ADF-4843-A7E3-D55906745156}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0619ED5D-4ADF-4843-A7E3-D55906745156}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0619ED5D-4ADF-4843-A7E3-D55906745156}.Release|Any CPU.ActiveCfg = Release|Any CPU

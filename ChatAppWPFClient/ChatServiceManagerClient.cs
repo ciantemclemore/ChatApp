@@ -16,7 +16,7 @@ namespace ChatAppServiceLibrary.DataContracts
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Client", Namespace="http://schemas.datacontract.org/2004/07/ChatAppServiceLibrary.DataContracts")]
-    public partial class Client : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class Client : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
     {
         
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
@@ -48,7 +48,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.CreatedOnField = value;
+                if ((this.CreatedOnField.Equals(value) != true))
+                {
+                    this.CreatedOnField = value;
+                    this.RaisePropertyChanged("CreatedOn");
+                }
             }
         }
         
@@ -61,7 +65,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.IdField = value;
+                if ((this.IdField.Equals(value) != true))
+                {
+                    this.IdField = value;
+                    this.RaisePropertyChanged("Id");
+                }
             }
         }
         
@@ -74,7 +82,22 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.NameField = value;
+                if ((object.ReferenceEquals(this.NameField, value) != true))
+                {
+                    this.NameField = value;
+                    this.RaisePropertyChanged("Name");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null))
+            {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }
@@ -82,7 +105,7 @@ namespace ChatAppServiceLibrary.DataContracts
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Message", Namespace="http://schemas.datacontract.org/2004/07/ChatAppServiceLibrary.DataContracts")]
-    public partial class Message : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class Message : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
     {
         
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
@@ -122,7 +145,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.ChatRoomIdField = value;
+                if ((this.ChatRoomIdField.Equals(value) != true))
+                {
+                    this.ChatRoomIdField = value;
+                    this.RaisePropertyChanged("ChatRoomId");
+                }
             }
         }
         
@@ -135,7 +162,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.ChatRoomNameField = value;
+                if ((object.ReferenceEquals(this.ChatRoomNameField, value) != true))
+                {
+                    this.ChatRoomNameField = value;
+                    this.RaisePropertyChanged("ChatRoomName");
+                }
             }
         }
         
@@ -148,7 +179,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.ContentField = value;
+                if ((object.ReferenceEquals(this.ContentField, value) != true))
+                {
+                    this.ContentField = value;
+                    this.RaisePropertyChanged("Content");
+                }
             }
         }
         
@@ -161,7 +196,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.IdField = value;
+                if ((this.IdField.Equals(value) != true))
+                {
+                    this.IdField = value;
+                    this.RaisePropertyChanged("Id");
+                }
             }
         }
         
@@ -174,7 +213,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.ReceiverField = value;
+                if ((object.ReferenceEquals(this.ReceiverField, value) != true))
+                {
+                    this.ReceiverField = value;
+                    this.RaisePropertyChanged("Receiver");
+                }
             }
         }
         
@@ -187,7 +230,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.SenderField = value;
+                if ((object.ReferenceEquals(this.SenderField, value) != true))
+                {
+                    this.SenderField = value;
+                    this.RaisePropertyChanged("Sender");
+                }
             }
         }
         
@@ -200,7 +247,22 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.TimeStampField = value;
+                if ((this.TimeStampField.Equals(value) != true))
+                {
+                    this.TimeStampField = value;
+                    this.RaisePropertyChanged("TimeStamp");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null))
+            {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }
@@ -208,7 +270,7 @@ namespace ChatAppServiceLibrary.DataContracts
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ChatRoomRequest", Namespace="http://schemas.datacontract.org/2004/07/ChatAppServiceLibrary.DataContracts")]
-    public partial class ChatRoomRequest : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class ChatRoomRequest : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
     {
         
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
@@ -242,7 +304,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.ClientsField = value;
+                if ((object.ReferenceEquals(this.ClientsField, value) != true))
+                {
+                    this.ClientsField = value;
+                    this.RaisePropertyChanged("Clients");
+                }
             }
         }
         
@@ -255,7 +321,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.DisplayNameField = value;
+                if ((object.ReferenceEquals(this.DisplayNameField, value) != true))
+                {
+                    this.DisplayNameField = value;
+                    this.RaisePropertyChanged("DisplayName");
+                }
             }
         }
         
@@ -268,7 +338,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.IsPublicField = value;
+                if ((this.IsPublicField.Equals(value) != true))
+                {
+                    this.IsPublicField = value;
+                    this.RaisePropertyChanged("IsPublic");
+                }
             }
         }
         
@@ -281,7 +355,22 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.ServerNameField = value;
+                if ((object.ReferenceEquals(this.ServerNameField, value) != true))
+                {
+                    this.ServerNameField = value;
+                    this.RaisePropertyChanged("ServerName");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null))
+            {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }
@@ -289,7 +378,7 @@ namespace ChatAppServiceLibrary.DataContracts
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ChatRoom", Namespace="http://schemas.datacontract.org/2004/07/ChatAppServiceLibrary.DataContracts")]
-    public partial class ChatRoom : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class ChatRoom : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
     {
         
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
@@ -333,7 +422,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.ClientsField = value;
+                if ((object.ReferenceEquals(this.ClientsField, value) != true))
+                {
+                    this.ClientsField = value;
+                    this.RaisePropertyChanged("Clients");
+                }
             }
         }
         
@@ -346,7 +439,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.DisplayNameField = value;
+                if ((object.ReferenceEquals(this.DisplayNameField, value) != true))
+                {
+                    this.DisplayNameField = value;
+                    this.RaisePropertyChanged("DisplayName");
+                }
             }
         }
         
@@ -359,7 +456,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.IdField = value;
+                if ((this.IdField.Equals(value) != true))
+                {
+                    this.IdField = value;
+                    this.RaisePropertyChanged("Id");
+                }
             }
         }
         
@@ -372,7 +473,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.IsPublicField = value;
+                if ((this.IsPublicField.Equals(value) != true))
+                {
+                    this.IsPublicField = value;
+                    this.RaisePropertyChanged("IsPublic");
+                }
             }
         }
         
@@ -385,7 +490,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.LastMessageField = value;
+                if ((object.ReferenceEquals(this.LastMessageField, value) != true))
+                {
+                    this.LastMessageField = value;
+                    this.RaisePropertyChanged("LastMessage");
+                }
             }
         }
         
@@ -398,7 +507,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.MessagesField = value;
+                if ((object.ReferenceEquals(this.MessagesField, value) != true))
+                {
+                    this.MessagesField = value;
+                    this.RaisePropertyChanged("Messages");
+                }
             }
         }
         
@@ -411,7 +524,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.ReceiverTitleField = value;
+                if ((object.ReferenceEquals(this.ReceiverTitleField, value) != true))
+                {
+                    this.ReceiverTitleField = value;
+                    this.RaisePropertyChanged("ReceiverTitle");
+                }
             }
         }
         
@@ -424,7 +541,11 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.SenderTitleField = value;
+                if ((object.ReferenceEquals(this.SenderTitleField, value) != true))
+                {
+                    this.SenderTitleField = value;
+                    this.RaisePropertyChanged("SenderTitle");
+                }
             }
         }
         
@@ -437,7 +558,22 @@ namespace ChatAppServiceLibrary.DataContracts
             }
             set
             {
-                this.ServerNameField = value;
+                if ((object.ReferenceEquals(this.ServerNameField, value) != true))
+                {
+                    this.ServerNameField = value;
+                    this.RaisePropertyChanged("ServerName");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null))
+            {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }

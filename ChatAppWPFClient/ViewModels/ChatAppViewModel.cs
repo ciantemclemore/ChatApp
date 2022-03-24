@@ -4,17 +4,15 @@ using ChatAppWPFClient.Stores;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using System.Windows.Data;
 using System.Windows.Input;
 
 namespace ChatAppWPFClient.ViewModels
 {
     [ServiceBehavior(UseSynchronizationContext = false)]
-    public class ChatAppViewModel : ViewModelBase, IChatManagerServiceCallback, IWindow
+    public class ChatAppViewModel : ViewModelBase, IChatManagerServiceCallback
     {
         #region Client/Connection Members
         public Client LocalClient { get; set; }
@@ -57,8 +55,11 @@ namespace ChatAppWPFClient.ViewModels
                     }
                     CurrentMessages = ListViewMessages[_chatRoom.Id];
 
-                    IsRoomJoined = false;
-                    OnJoinRoomCommand.Execute(null);
+                    if (!_chatRoom.IsPublic || (_chatRoom.IsPublic && !_chatRoom.Clients.Any(c => c.Id == LocalClient.Id)))
+                    {
+                        IsRoomJoined = false;
+                        OnJoinRoomCommand.Execute(null);
+                    }
                 }
             }
         }
@@ -114,9 +115,11 @@ namespace ChatAppWPFClient.ViewModels
         #endregion
 
         #region View Model Properties
-        Dictionary<Guid, ObservableCollection<Message>> ListViewMessages { get; set; } = new Dictionary<Guid, ObservableCollection<Message>>();
+        private Dictionary<Guid, ObservableCollection<Message>> ListViewMessages { get; set; } = new Dictionary<Guid, ObservableCollection<Message>>();
 
         public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel;
+
+        public bool IsRoomJoined { get; set; }
         #endregion
 
         #region View Commands
@@ -129,18 +132,12 @@ namespace ChatAppWPFClient.ViewModels
         public RelayCommand OnJoinRoomCommand { get; set; }
 
         public ICommand NavigateChatAppControl { get; set; }
-
-        public bool IsRoomJoined { get; set; }
-
         #endregion
 
         #region Fields
         private readonly object _sync = new object();
         private readonly NavigationStore _navigationStore;
         #endregion
-
-        public Action Close { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
 
         public ChatAppViewModel(NavigationStore navigationStore)
         {
@@ -152,10 +149,11 @@ namespace ChatAppWPFClient.ViewModels
             OnJoinRoomCommand = new RelayCommand(async (o) => await JoinPublicRoom(), (o) => !IsRoomJoined);
         }
 
-        private async Task JoinPublicRoom() 
+        #region Client to Server Method Calls
+        private async Task JoinPublicRoom()
         {
             // needs to work for public selection and private
-            if (PublicChatRooms.Any() && (!SelectedChatRoom.Clients.Any(c => c.Id == LocalClient.Id) || !SelectedChatRoom.IsPublic)) 
+            if (PublicChatRooms.Any() && (!SelectedChatRoom.Clients.Any(c => c.Id == LocalClient.Id) || !SelectedChatRoom.IsPublic))
             {
                 await TcpClient.JoinChatRoomAsync(SelectedChatRoom.Id, LocalClient);
                 IsRoomJoined = true;
@@ -183,10 +181,12 @@ namespace ChatAppWPFClient.ViewModels
 
         private void CreatePublicRoom()
         {
-            CreatePublicRoomViewModel createPublicRoomViewModel = new CreatePublicRoomViewModel(_navigationStore);
-            createPublicRoomViewModel.LocalClient = LocalClient;
-            createPublicRoomViewModel.TcpClient = TcpClient;
-            createPublicRoomViewModel.ReturnToViewModel = this;
+            CreatePublicRoomViewModel createPublicRoomViewModel = new CreatePublicRoomViewModel(_navigationStore)
+            {
+                LocalClient = LocalClient,
+                TcpClient = TcpClient,
+                ReturnToViewModel = this
+            };
             NavigateChatAppControl = new NavigateCommand<CreatePublicRoomViewModel>(_navigationStore, () => createPublicRoomViewModel);
             NavigateChatAppControl.Execute(null);
         }
@@ -227,7 +227,7 @@ namespace ChatAppWPFClient.ViewModels
                 };
             }
 
-            MessageText = String.Empty;
+            MessageText = string.Empty;
 
             await TcpClient.SendMessageAsync(newMessage);
         }
@@ -236,85 +236,81 @@ namespace ChatAppWPFClient.ViewModels
         {
             OnPropertyChanged(nameof(CurrentViewModel));
         }
+        #endregion
 
 
+        #region Server to Client Callbacks & Helper Methods
         public void ReceiveMessage(Message message)
         {
-            lock (_sync)
+            // Place the message in neccessary chat room, if it doesn't exist locally, create it
+            ChatRoom chatRoom = PrivateChatRooms.Union(PublicChatRooms).FirstOrDefault(cr => cr.Id == message.ChatRoomId);
+
+            if (chatRoom != null)
             {
-                // Place the message in neccessary chat room, if it doesn't exist locally, create it
-                ChatRoom chatRoom = PrivateChatRooms.Union(PublicChatRooms).FirstOrDefault(cr => cr.Id == message.ChatRoomId);
+                chatRoom.Messages.Add(message);
+                chatRoom.LastMessage = !string.IsNullOrEmpty(chatRoom.ReceiverTitle) && message.Receiver.Name == LocalClient.Name ? message.Content : string.Empty;
+            }
+            else
+            {
+                ChatRoom newChatRoom = new ChatRoom()
+                {
+                    Id = message.ChatRoomId,
+                    Clients = new List<Client>() { message.Sender, message.Receiver },
+                    IsPublic = false,
+                    Messages = new List<Message>() { message },
+                    DisplayName = message.Sender.Name,
+                    ReceiverTitle = message.Receiver.Name,
+                    SenderTitle = message.Sender.Name,
+                    LastMessage = message.Content
+                };
 
-                if (chatRoom != null)
-                {
-                    chatRoom.Messages.Add(message);
-                    chatRoom.LastMessage = !string.IsNullOrEmpty(chatRoom.ReceiverTitle) ? chatRoom.Messages.OrderBy(m => m.TimeStamp).Last(m => m.ChatRoomName == chatRoom.ReceiverTitle).Content : string.Empty;
-                }
-                else
-                {
-                    ChatRoom newChatRoom = new ChatRoom()
-                    {
-                        Id = message.ChatRoomId,
-                        Clients = new List<Client>() { message.Sender, message.Receiver },
-                        IsPublic = false,
-                        Messages = new List<Message>() { message },
-                        DisplayName = message.Sender.Name,
-                        ReceiverTitle = message.Receiver.Name,
-                        SenderTitle = message.Sender.Name,
-                        LastMessage = message.Content
-                    };
+                PrivateChatRooms.Add(newChatRoom);
+            }
 
-                    PrivateChatRooms.Add(newChatRoom);
-                    //SelectedChatRoom = newChatRoom;
-                }
-
-                // Add the message to the current channel
-                if (ListViewMessages.ContainsKey(message.ChatRoomId))
-                {
-                    ListViewMessages[message.ChatRoomId].Add(message);
-                }
-                else 
-                {
-                    ListViewMessages.Add(message.ChatRoomId, new ObservableCollection<Message> { message });
-                }
+            // Add the message to the current channel
+            if (ListViewMessages.ContainsKey(message.ChatRoomId))
+            {
+                ListViewMessages[message.ChatRoomId].Add(message);
+            }
+            else
+            {
+                ListViewMessages.Add(message.ChatRoomId, new ObservableCollection<Message> { message });
             }
         }
 
         public void UpdateOnlineClients(List<Client> clients)
         {
             OnlineClients = new ObservableCollection<Client>(clients.Where(c => c.Id != LocalClient.Id));
+
+            // Could use this code if you want to remove private chat rooms of users who logged off
+            //var onlineClientName = OnlineClients.Select(c => c.Name);
+            //PrivateChatRooms = new ObservableCollection<ChatRoom>(PrivateChatRooms.Where(pcr => onlineClientName.Contains(pcr.DisplayName)));
         }
 
         public void UpdatePublicChatRooms(List<ChatRoom> chatRooms)
         {
             PublicChatRooms = new ObservableCollection<ChatRoom>(chatRooms);
-
             RemoveUnusedChatMessages();
 
             // Must reset the current chat room, using "SelectedValue" property on listview retriggers the call on list reinitialization
-            //if (SelectedChatRoom != null) 
-            //{
-            //    ChatRoom currentChatRoom = SelectedChatRoom;
-            //    SelectedChatRoom = currentChatRoom.IsPublic ? PublicChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id) : PrivateChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id);
-            //}
+            if (SelectedChatRoom != null)
+            {
+                ChatRoom currentChatRoom = SelectedChatRoom;
+                SelectedChatRoom = currentChatRoom.IsPublic ? PublicChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id) : PrivateChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id);
+            }
         }
 
-        private void RemoveUnusedChatMessages() 
+        private void RemoveUnusedChatMessages()
         {
             // Make sure to remove any public rooms from list view messags that don't exist
-            List<Guid> keysToRemove = new List<Guid>();
-            foreach (var key in ListViewMessages.Select(kvp => kvp.Key))
+            foreach (Guid chatRoomId in PublicChatRooms.Select(cr => cr.Id))
             {
-                if (!PublicChatRooms.Any(cr => cr.Id == key) || !PrivateChatRooms.Any(cr => cr.Id == key))
+                if (!ListViewMessages.Keys.Any(key => key == chatRoomId))
                 {
-                    keysToRemove.Add(key);
+                    ListViewMessages.Remove(chatRoomId);
                 }
             }
-
-            foreach (var key in keysToRemove)
-            {
-                ListViewMessages.Remove(key);
-            }
         }
+        #endregion
     }
 }
