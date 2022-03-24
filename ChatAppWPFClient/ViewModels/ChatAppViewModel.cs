@@ -120,6 +120,8 @@ namespace ChatAppWPFClient.ViewModels
         public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel;
 
         public bool IsRoomJoined { get; set; }
+
+        public string CreatePublicRoomName { get; set; }
         #endregion
 
         #region View Commands
@@ -293,11 +295,16 @@ namespace ChatAppWPFClient.ViewModels
             RemoveUnusedChatMessages();
 
             // Must reset the current chat room, using "SelectedValue" property on listview retriggers the call on list reinitialization
-            if (SelectedChatRoom != null)
+            if (!string.IsNullOrEmpty(CreatePublicRoomName)) 
             {
-                ChatRoom currentChatRoom = SelectedChatRoom;
-                SelectedChatRoom = currentChatRoom.IsPublic ? PublicChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id) : PrivateChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id);
+                SelectedChatRoom = PublicChatRooms.FirstOrDefault(pcr => pcr.DisplayName == CreatePublicRoomName);
+                CreatePublicRoomName = null;
             }
+            //if (SelectedChatRoom != null)
+            //{
+            //    ChatRoom currentChatRoom = SelectedChatRoom;
+            //    SelectedChatRoom = currentChatRoom.IsPublic ? PublicChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id) : PrivateChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id);
+            //}
         }
 
         private void RemoveUnusedChatMessages()

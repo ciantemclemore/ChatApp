@@ -46,9 +46,11 @@ namespace ChatAppWPFClient.ViewModels
                 ServerName = RoomName
             };
 
+            // let the chat app know the name of the room you created so you can select it
+            ReturnToViewModel.CreatePublicRoomName = chatRoomRequest.DisplayName;
+
             if (await TcpClient.CreatePublicChatRoomAsync(chatRoomRequest))
             {
-                ReturnToViewModel.SelectedChatRoom = ReturnToViewModel.PublicChatRooms.FirstOrDefault(cr => cr.DisplayName == chatRoomRequest.DisplayName);
                 NavigateChatAppControl = new NavigateCommand<ChatAppViewModel>(_navigationStore, () => ReturnToViewModel);
                 NavigateChatAppControl.Execute(null);
             }
