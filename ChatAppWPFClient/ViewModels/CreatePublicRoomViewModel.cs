@@ -48,6 +48,7 @@ namespace ChatAppWPFClient.ViewModels
 
             if (await TcpClient.CreatePublicChatRoomAsync(chatRoomRequest))
             {
+                ReturnToViewModel.SelectedChatRoom = ReturnToViewModel.PublicChatRooms.FirstOrDefault(cr => cr.DisplayName == chatRoomRequest.DisplayName);
                 NavigateChatAppControl = new NavigateCommand<ChatAppViewModel>(_navigationStore, () => ReturnToViewModel);
                 NavigateChatAppControl.Execute(null);
             }

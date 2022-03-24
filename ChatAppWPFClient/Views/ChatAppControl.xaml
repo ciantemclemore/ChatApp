@@ -1,5 +1,6 @@
 ﻿<UserControl x:Class="ChatAppWPFClient.Views.ChatAppControl"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:h="clr-namespace:ChatAppWPFClient"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -44,14 +45,14 @@
                           ItemsSource="{Binding PublicChatRooms, UpdateSourceTrigger=PropertyChanged}"
                           DisplayMemberPath="DisplayName" 
                           SelectedValue="{Binding SelectedChatRoom}"
-                          Foreground="White" 
+                          Foreground="White"
                           ItemContainerStyle="{StaticResource ChatRoomCard}">
 
-                    <i:Interaction.Triggers>
+                    <!--<i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding OnJoinPublicRoomCommand }" />
+                            <i:InvokeCommandAction Command="{Binding OnJoinPublicRoomCommand, IsAsync=True}" />
                         </i:EventTrigger>
-                    </i:Interaction.Triggers>
+                    </i:Interaction.Triggers>-->
                     
                 </ListView>
             </Grid>
@@ -71,7 +72,7 @@
                           DisplayMemberPath="DisplayName"
                           SelectedValue="{Binding SelectedChatRoom}"
                           Foreground="White"
-                          ItemContainerStyle="{StaticResource ChatRoomCard}">
+                          ItemContainerStyle="{StaticResource PrivateChatRoomCard}">
                            
                 </ListView>
             </Grid>

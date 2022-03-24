@@ -27,8 +27,6 @@ namespace ChatAppServiceLibrary.DataContracts
         
         private string NameField;
         
-        private System.Nullable<System.Guid> TitleIdField;
-        
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData
         {
             get
@@ -77,19 +75,6 @@ namespace ChatAppServiceLibrary.DataContracts
             set
             {
                 this.NameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<System.Guid> TitleId
-        {
-            get
-            {
-                return this.TitleIdField;
-            }
-            set
-            {
-                this.TitleIdField = value;
             }
         }
     }
@@ -317,6 +302,8 @@ namespace ChatAppServiceLibrary.DataContracts
         
         private bool IsPublicField;
         
+        private string LastMessageField;
+        
         private System.Collections.Generic.List<ChatAppServiceLibrary.DataContracts.Message> MessagesField;
         
         private string ReceiverTitleField;
@@ -386,6 +373,19 @@ namespace ChatAppServiceLibrary.DataContracts
             set
             {
                 this.IsPublicField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string LastMessage
+        {
+            get
+            {
+                return this.LastMessageField;
+            }
+            set
+            {
+                this.LastMessageField = value;
             }
         }
         

@@ -63,6 +63,7 @@
     <Compile Include="ChatServiceManagerClient.cs" />
     <Compile Include="Commands\CommandBase.cs" />
     <Compile Include="Commands\NavigateCommand.cs" />
+    <Compile Include="HandlingEventTrigger.cs" />
     <Compile Include="IWindow.cs" />
     <Compile Include="Stores\NavigationStore.cs" />
     <Compile Include="ViewModels\CreatePublicRoomViewModel.cs" />
@@ -93,6 +94,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Themes\ChatItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\PrivateChatRoomCard.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

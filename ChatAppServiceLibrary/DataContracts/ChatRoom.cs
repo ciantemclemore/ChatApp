@@ -37,5 +37,8 @@ namespace ChatAppServiceLibrary.DataContracts
 
         [DataMember]
         public List<Message> Messages { get; set; }
+
+        [DataMember]
+        public string LastMessage { get; set; }
     }
 }

@@ -71,12 +71,9 @@ namespace ChatAppServiceLibrary
 
                     lock (chatRoomLock)
                     {
-                        // Need to also provide the new client with the available rooms
-                        foreach (Guid clientKey in _clientCallbacks.Keys)
-                        {
-                            IChatManagerCallback callback = _clientCallbacks[clientKey];
-                            callback.UpdatePublicChatRooms(GetAvailableRooms());
-                        }
+                        // Update the current client with the public chatrooms
+                        var callback = _clientCallbacks[client.Id];
+                        callback.UpdatePublicChatRooms(GetAvailableRooms());
                     }
                 }
             }
@@ -170,40 +167,60 @@ namespace ChatAppServiceLibrary
             lock (chatRoomLock)
             {
                 ChatRoom chatRoomToJoin = _chatRooms[chatRoomId];
+                int chatRoomCount = _chatRooms.Count;
 
                 // Add the client to the new room
-                if (chatRoomToJoin != null && !chatRoomToJoin.Clients.Any(c => c.Id == client.Id))
+                if (chatRoomToJoin != null && chatRoomToJoin.IsPublic && !chatRoomToJoin.Clients.Any(c => c.Id == client.Id))
                 {
                     chatRoomToJoin.Clients.Add(client);
+
+                    List<ChatRoom> chatRoomsToLeave = _chatRooms.Values.Where(cr => cr.IsPublic && !cr.DisplayName.Equals(chatRoomToJoin?.DisplayName) && cr.Clients.Any(c => c.Id == client.Id)).ToList();
+
+                    LeaveChatRooms(chatRoomsToLeave, client.Id);
+                    CloseChatRooms();
+                }
+                else if (chatRoomToJoin != null && !chatRoomToJoin.IsPublic) 
+                {
+                    // Private chatrooms do not disappear, leave any public rooms the user is in
+                    List<ChatRoom> chatRoomsToLeave = _chatRooms.Values.Where(cr => cr.IsPublic && cr.Clients.Any(c => c.Id == client.Id)).ToList();
+                    LeaveChatRooms(chatRoomsToLeave, client.Id);
+                    CloseChatRooms();
                 }
 
-                List<ChatRoom> chatRoomsToLeave = _chatRooms.Values.Where(cr => cr.IsPublic && !cr.DisplayName.Equals(chatRoomToJoin?.DisplayName) && cr.Clients.Any(c => c.Id == client.Id)).ToList();
-
-                // Clients can only be in one public room at a time, remove the client from the previous room
-                if (chatRoomsToLeave.Any())
+                if (chatRoomCount != _chatRooms.Count) 
                 {
-                    foreach (ChatRoom chatRoom in chatRoomsToLeave)
+                    lock (callbackLock)
                     {
-                        Client clientToRemove = chatRoom.Clients.FirstOrDefault(c => c.Id == client.Id);
-                        _ = chatRoom.Clients.Remove(clientToRemove);
+                        foreach (var callback in _clientCallbacks.Values)
+                        {
+                            callback.UpdatePublicChatRooms(new ObservableCollection<ChatRoom>(_chatRooms.Values.Where(cr => cr.IsPublic)));
+                        }
                     }
                 }
+            }
+        }
 
-                // Close a chat room if it is completely empty
-                foreach (ChatRoom chatRoom in _chatRooms.Values.Where(cr => cr.IsPublic).ToList())
+        private void CloseChatRooms() 
+        {
+            // Close a chat room if it is completely empty
+            foreach (ChatRoom chatRoom in _chatRooms.Values.Where(cr => cr.IsPublic).ToList())
+            {
+                if (!chatRoom.Clients.Any())
                 {
-                    if (!chatRoom.Clients.Any())
-                    {
-                        _ = _chatRooms.Remove(chatRoom.Id);
-                    }
+                    _ = _chatRooms.Remove(chatRoom.Id);
                 }
+            }
+        }
 
-                lock (callbackLock)
+        private void LeaveChatRooms(List<ChatRoom> chatRooms, Guid clientId) 
+        {
+            // Clients can only be in one public room at a time, remove the client from the previous room
+            if (chatRooms.Any())
+            {
+                foreach (ChatRoom chatRoom in chatRooms)
                 {
-                    foreach (var callback in _clientCallbacks.Values)
-                    {
-                        callback.UpdatePublicChatRooms(new ObservableCollection<ChatRoom>(_chatRooms.Values));
-                    }
+                    Client clientToRemove = chatRoom.Clients.FirstOrDefault(c => c.Id == clientId);
+                    _ = chatRoom.Clients.Remove(clientToRemove);
                 }
             }
         }

@@ -58,8 +58,7 @@ namespace ChatAppWPFClient.ViewModels
             {
                 Id = Guid.NewGuid(),
                 CreatedOn = DateTime.Now,
-                Name = Username,
-                TitleId = null
+                Name = Username
             };
 
             // assign the current client to the view model

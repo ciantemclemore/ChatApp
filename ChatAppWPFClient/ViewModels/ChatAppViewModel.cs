@@ -56,6 +56,9 @@ namespace ChatAppWPFClient.ViewModels
                         ListViewMessages.Add(_chatRoom.Id, new ObservableCollection<Message>());
                     }
                     CurrentMessages = ListViewMessages[_chatRoom.Id];
+
+                    IsRoomJoined = false;
+                    OnJoinRoomCommand.Execute(null);
                 }
             }
         }
@@ -123,9 +126,11 @@ namespace ChatAppWPFClient.ViewModels
 
         public RelayCommand CreatePublicRoomCommand { get; set; }
 
-        public RelayCommand OnJoinPublicRoomCommand { get; set; }
+        public RelayCommand OnJoinRoomCommand { get; set; }
 
         public ICommand NavigateChatAppControl { get; set; }
+
+        public bool IsRoomJoined { get; set; }
 
         #endregion
 
@@ -144,12 +149,17 @@ namespace ChatAppWPFClient.ViewModels
             CreatePrivateRoomCommand = new RelayCommand(async (o) => await CreatePrivateRoom(), (o) => (SelectedUser != null) && !PrivateChatRooms.Any(cr => cr.DisplayName.Equals($"{SelectedUser.Name}")));
             CreatePublicRoomCommand = new RelayCommand((o) => CreatePublicRoom());
             SendMessageCommand = new RelayCommand(async (o) => await SendMessage(), (o) => !string.IsNullOrEmpty(MessageText) && SelectedChatRoom != null);
-            OnJoinPublicRoomCommand = new RelayCommand(async (o) => await JoinPublicRoom(), (o) => SelectedChatRoom != null && SelectedChatRoom.IsPublic);
+            OnJoinRoomCommand = new RelayCommand(async (o) => await JoinPublicRoom(), (o) => !IsRoomJoined);
         }
 
         private async Task JoinPublicRoom() 
         {
-            await TcpClient.JoinChatRoomAsync(SelectedChatRoom.Id, LocalClient);    
+            // needs to work for public selection and private
+            if (PublicChatRooms.Any() && (!SelectedChatRoom.Clients.Any(c => c.Id == LocalClient.Id) || !SelectedChatRoom.IsPublic)) 
+            {
+                await TcpClient.JoinChatRoomAsync(SelectedChatRoom.Id, LocalClient);
+                IsRoomJoined = true;
+            }
         }
 
         private async Task CreatePrivateRoom()
@@ -238,6 +248,7 @@ namespace ChatAppWPFClient.ViewModels
                 if (chatRoom != null)
                 {
                     chatRoom.Messages.Add(message);
+                    chatRoom.LastMessage = !string.IsNullOrEmpty(chatRoom.ReceiverTitle) ? chatRoom.Messages.OrderBy(m => m.TimeStamp).Last(m => m.ChatRoomName == chatRoom.ReceiverTitle).Content : string.Empty;
                 }
                 else
                 {
@@ -250,10 +261,11 @@ namespace ChatAppWPFClient.ViewModels
                         DisplayName = message.Sender.Name,
                         ReceiverTitle = message.Receiver.Name,
                         SenderTitle = message.Sender.Name,
+                        LastMessage = message.Content
                     };
 
                     PrivateChatRooms.Add(newChatRoom);
-                    SelectedChatRoom = newChatRoom;
+                    //SelectedChatRoom = newChatRoom;
                 }
 
                 // Add the message to the current channel
@@ -277,11 +289,31 @@ namespace ChatAppWPFClient.ViewModels
         {
             PublicChatRooms = new ObservableCollection<ChatRoom>(chatRooms);
 
+            RemoveUnusedChatMessages();
+
             // Must reset the current chat room, using "SelectedValue" property on listview retriggers the call on list reinitialization
-            if (SelectedChatRoom != null) 
+            //if (SelectedChatRoom != null) 
+            //{
+            //    ChatRoom currentChatRoom = SelectedChatRoom;
+            //    SelectedChatRoom = currentChatRoom.IsPublic ? PublicChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id) : PrivateChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id);
+            //}
+        }
+
+        private void RemoveUnusedChatMessages() 
+        {
+            // Make sure to remove any public rooms from list view messags that don't exist
+            List<Guid> keysToRemove = new List<Guid>();
+            foreach (var key in ListViewMessages.Select(kvp => kvp.Key))
             {
-                ChatRoom currentChatRoom = SelectedChatRoom;
-                SelectedChatRoom = currentChatRoom.IsPublic ? PublicChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id) : PrivateChatRooms.FirstOrDefault(cr => cr.Id == currentChatRoom.Id);
+                if (!PublicChatRooms.Any(cr => cr.Id == key) || !PrivateChatRooms.Any(cr => cr.Id == key))
+                {
+                    keysToRemove.Add(key);
+                }
+            }
+
+            foreach (var key in keysToRemove)
+            {
+                ListViewMessages.Remove(key);
             }
         }
     }

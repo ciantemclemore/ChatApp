@@ -19,10 +19,5 @@ namespace ChatAppServiceLibrary.DataContracts
 
         [DataMember]
         public DateTime CreatedOn { get; set; }
-
-        [DataMember]
-        public Guid? TitleId { get; set; }
-
-        public ObservableCollection<Message> ClientMessages { get; set; }
     }
 }
