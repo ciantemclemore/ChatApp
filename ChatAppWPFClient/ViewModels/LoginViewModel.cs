@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace ChatAppWPFClient.ViewModels
 {
-    public class LoginViewModel : ViewModelBase, IWindow
+    public class LoginViewModel : ViewModelBase
     {
         public RelayCommand LoginCommand { get; set; }
 
@@ -29,20 +29,12 @@ namespace ChatAppWPFClient.ViewModels
             }
         }
 
-        public Action Close { get; set; }
-
-        public Action Open { get; set; }
-
         private readonly NavigationStore _navigationStore;
 
         public LoginViewModel(NavigationStore navigationStore) 
         {
             _navigationStore = navigationStore;
             LoginCommand = new RelayCommand(async (o) => await ConnectToServer(), o => !string.IsNullOrEmpty(Username));
-        }
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Clicked");
         }
 
         private async Task ConnectToServer()
@@ -76,16 +68,6 @@ namespace ChatAppWPFClient.ViewModels
                 chatAppViewModel.LocalClient = null;
                 Username = string.Empty;
             }
-        }
-
-        public void CloseWindow() 
-        {
-            Close?.Invoke();
-        }
-
-        public void OpenWindow() 
-        {
-            Open?.Invoke();
         }
     }
 }

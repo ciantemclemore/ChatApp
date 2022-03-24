@@ -63,8 +63,6 @@
     <Compile Include="ChatServiceManagerClient.cs" />
     <Compile Include="Commands\CommandBase.cs" />
     <Compile Include="Commands\NavigateCommand.cs" />
-    <Compile Include="HandlingEventTrigger.cs" />
-    <Compile Include="IWindow.cs" />
     <Compile Include="Stores\NavigationStore.cs" />
     <Compile Include="ViewModels\CreatePublicRoomViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
