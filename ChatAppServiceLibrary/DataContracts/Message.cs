@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChatAppServiceLibrary.DataContracts
 {
+    /// <summary>
+    /// Represents a message that is delivered to a chat room
+    /// </summary>
     [DataContract]
     public class Message
     {

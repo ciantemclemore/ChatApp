@@ -4,6 +4,10 @@ using System.ServiceModel;
 
 namespace ChatAppServiceHost
 {
+    /// <summary>
+    /// This class contains the Hosted WCF service that the chat
+    /// manager application will communicate with.
+    /// </summary>
     static class Program
     {
         static void Main(string[] args)

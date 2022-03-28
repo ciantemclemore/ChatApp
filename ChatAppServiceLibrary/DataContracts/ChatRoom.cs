@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChatAppServiceLibrary.DataContracts
 {
+    /// <summary>
+    /// ChatRooms represent rooms that users can join and send messages to
+    /// </summary>
     [DataContract]
     public class ChatRoom
     {

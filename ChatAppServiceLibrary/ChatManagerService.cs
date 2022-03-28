@@ -7,6 +7,10 @@ using System.ServiceModel;
 
 namespace ChatAppServiceLibrary
 {
+    /// <summary>
+    /// This class represents the implementation of the IChatManagerService. It contains all of the methods
+    /// a client can call.
+    /// </summary>
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "ChatManagerService" in both code and config file together.
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single, UseSynchronizationContext = false)]
     public class ChatManagerService : IChatManagerService
